@@ -1,9 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { initializeApp } from 'firebase/app'; 
-import { getAnalytics } from 'firebase/analytics'; 
-import firebase from 'firebase'; // Import Firebase
+import * as firebase from 'firebase'; // Import Firebase
 import HomeScreen from './components/Screens/HomeScreen.js';
 import LoginScreen from './components/Screens/LoginScreen.js';
 import SignUpScreen from './components/Screens/Signup.js';
@@ -20,25 +18,14 @@ const firebaseConfig = {
   measurementId: "G-P609EPJE9M"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-
-const Stack = createStackNavigator();
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+let app;
+if (!firebase.app.length) {
+  firebase.initializeApp(firebaseConfig);
+} else {
+  app = firebase.app();
 }
 
-export default App;
+const auth = firebase.auth()
+
+export { auth }; 
