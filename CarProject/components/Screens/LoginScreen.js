@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import firebase from 'firebase/app';
+
 
 function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -15,14 +17,27 @@ function LoginScreen({ navigation }) {
 
   const handleLogin = () => {
     // Implement your login logic here, e.g., with Firebase or a backend API.
-    // For this example, we'll just log the email and password to the console.
-    console.log('Email:', email);
-    console.log('Password:', password);
 
-    // You can also navigate to another screen after login.
-    // For example, navigate to the Home screen:
-    // navigation.navigate('Home');
+    // Simulated Firebase login (replace with actual Firebase authentication):
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        // Successfully logged in
+        const user = userCredential.user;
+        console.log('User logged in:', user.email);
+
+        // Navigate to homescreen after log in
+        navigation.navigate('Home');
+      })
+      .catch((error) => {
+        // Handle login error
+        const errorMessage = error.message;
+        setError(errorMessage);
+        console.error('Login error:', errorMessage);
+      });
   };
+
 
   return (
     <View style={styles.container}>
