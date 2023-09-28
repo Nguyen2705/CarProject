@@ -11,10 +11,12 @@ const firebaseConfig = {
   appId: "1:808665816378:web:88edbc64a587909ffe4403",
   measurementId: "G-P609EPJE9M"
 };
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig); 
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+// Initialize variables
+const auth = firebase.auth()
+const database = firebase.database(); 
 
 export const Register = () => {
   const [name, setName] = useState('');
@@ -60,7 +62,7 @@ export const Register = () => {
       <TextInput
         value={name}
         onChangeText={(text) => setName(text)}
-        placeholder="Your Full Name"
+        placeholder="Full Name"
       />
       <TextInput
         value={email}
