@@ -39,6 +39,7 @@ To run the project, please follow these steps:
    ```
 3. Open new terminal and run the following commands.
    ```sh
+   cd CarProject
    npm install
    npm start
    
