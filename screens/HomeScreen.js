@@ -58,6 +58,8 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'white',
   },
   header: {
@@ -70,8 +72,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E5E5E5',
   },
   logo: {
-    width: 120,
-    height: 40,
+    width: 100,
+    height: 100,
   },
   headerButtons: {
     flexDirection: 'row',

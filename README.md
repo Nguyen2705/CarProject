@@ -45,9 +45,8 @@ To run the project, please follow these steps:
    
    # You will have the option to either run it on iOS, Android or Web
    
-   # Use this command on the terminal to run it on web
-   npx expo install @expo/webpack-config@^19.0.0
+   # Press w to run the project on the web
 
-   # If you want to run it on iOS or Android, use a phone to scan it or use a simulator
+   # If you want to run it on iOS or Android, use a phone to scan the QR code or use a simulator
    ```
 4. Choose your platform and experience the app.
