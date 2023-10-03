@@ -84,7 +84,7 @@ const LoginScreen = () => {
         <Text style={styles.orText}>OR</Text>
         <View style={styles.line} />
       </View>
-      <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
+      <TouchableOpacity onPress={() => navigation.replace('SignUp')} style={styles.signUpButton}>
         <Text style={styles.signUpButtonText}>Sign Up with Email</Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
