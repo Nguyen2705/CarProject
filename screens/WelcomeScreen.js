@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/core';
 import React from 'react';
+// import FastImage from 'react-native-fast-image'
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -16,8 +17,9 @@ const WelcomeScreen = () => {
         <KeyboardAvoidingView style={styles.container} behavior="padding">
             <View style={styles.logocontainer}>
                 <Image
-                    source={require('../assets/logo1.jpg')}
+                    source={require('../assets/logo2.png')}
                     style={styles.logo}
+                    // resizeMode={FastImage.resizeMode.contain}
                 />
                 <Text style={styles.logoText}>CARVO</Text>
             </View>
