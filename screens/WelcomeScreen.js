@@ -17,7 +17,7 @@ const WelcomeScreen = () => {
         <KeyboardAvoidingView style={styles.container} behavior="padding">
             <View style={styles.logocontainer}>
                 <Image
-                    source={require('../assets/logo2.png')}
+                    source={require('../assets/gif.gif')}
                     style={styles.logo}
                     // resizeMode={FastImage.resizeMode.contain}
                 />
