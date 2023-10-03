@@ -27,15 +27,6 @@ const LoginScreen = () => {
     return unsubscribe;
   }, []);
 
-  const handleSignUp = () => {
-    auth
-      .createUserWithEmailAndPassword(email, password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
-        console.log('Registered with:', user.email);
-      })
-      .catch((error) => alert(error.message));
-  };
 
   const handleLogin = () => {
     auth

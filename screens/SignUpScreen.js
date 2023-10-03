@@ -14,8 +14,9 @@ import { auth } from '../firebase';
 const SignUpScreen = () =>{
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [lastName, setLastName] = useState(''); 
     const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState(''); 
+    
 
     const navigation = useNavigation();
 
@@ -50,16 +51,16 @@ const SignUpScreen = () =>{
           </View>
           <View style={styles.inputContainer}>
             <TextInput
-              placeholder='Last Name'
-              value={lastName}
-              onChangeText={(text) => setLastName(text)}
+              placeholder='FirstName'
+              value={firstName}
+              onChangeText={(text) => setFirstName(text)}
               style={styles.input}
               placeholderTextColor='#B0B0B0'
             />
             <TextInput
-              placeholder='FirstName'
-              value={firstName}
-              onChangeText={(text) => setFirstName(text)}
+              placeholder='Last Name'
+              value={lastName}
+              onChangeText={(text) => setLastName(text)}
               style={styles.input}
               placeholderTextColor='#B0B0B0'
             />
