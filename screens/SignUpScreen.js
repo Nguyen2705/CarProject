@@ -43,7 +43,7 @@ const SignUpScreen = () =>{
         <KeyboardAvoidingView style={styles.container} behavior="padding">
           <View style={styles.logoContainer}>
             <Image
-              source={require('../assets/logo1.jpg')}
+              source={require('../assets/logo2.png')}
               style={styles.logo}
             />
             <Text style={styles.logoText}>CARVO</Text>
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
         flex: 1, 
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'yellow',
+        backgroundColor: 'white',
     },
     logocontainer: {
         alignItems: 'center', 
@@ -122,26 +122,39 @@ const styles = StyleSheet.create({
         fontWeight: 'bold', 
         marginTop: 10,
     },
+    inputContainer: {
+        width: '80%',
+    },
+    input: {
+        backgroundColor: '#F0F0F0',
+        paddingHorizontal: 15,
+        paddingVertical: 12,
+        borderRadius: 10,
+        marginTop: 10,
+        fontSize: 16,
+        color: '#333',
+    },
     signUpButton: {
-    backgroundColor: '#42B72A',
-    width: '80%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 20,
+        backgroundColor: '#42B72A',
+        width: '80%',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        marginTop: 20,
     },
     signUpButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
     },
     loginInContainer: {
-    color: 'black', 
-    fontSize: 12, 
+        color: 'black', 
+        fontSize: 12, 
+        alignItems: 'center',
     },
     loginText: {
         color: 'black', 
         fontSize: 12, 
-        alignItems: 'center'
+        alignItems: 'center',
     }
 }); 
