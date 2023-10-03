@@ -31,7 +31,7 @@ const WelcomeScreen = () => {
                 <Text style={styles.orText}>OR</Text>
                 <View style={styles.line}/>
             </View>
-            <TouchableOpacity onPress={() => navigation.replace('Login')} style={styles.signUpButton}>
+            <TouchableOpacity onPress={() => navigation.replace('SignUp')} style={styles.signUpButton}>
                 <Text style={styles.signUpButtonText}>Sign Up</Text>
             </TouchableOpacity>
         </KeyboardAvoidingView>
