@@ -20,7 +20,7 @@ const HomeScreen = () => {
       {/* Header */}
       <View style={styles.header}>
         <Image
-          source={require('../assets/logo.jpg')}
+          source={require('../assets/logo2.jpg')}
           style={styles.logo}
         />
         <View style={styles.headerButtons}>
