@@ -21,7 +21,7 @@ const WelcomeScreen = () => {
                     style={styles.logo}
                     // resizeMode={FastImage.resizeMode.contain}
                 />
-                <Text style={styles.logoText}>CARVO</Text>
+                <Text style={styles.logoText}>WELCOME TO CARVO</Text>
             </View>
             <TouchableOpacity onPress={() => navigation.replace('Login')} style={styles.loginButton}>
                 <Text style={styles.loginButtonText}>Log In</Text>
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },  
     logo: {
-        width: 300, 
+        width: 500, 
         height: 300, 
     }, 
     logoText: {
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         backgroundColor: '#333363',
-        width: '80%',
+        width: 300,
         padding: 15,
         borderRadius: 10,
         alignItems: 'center',
@@ -79,9 +79,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     },
     line: {
-    flex: 1,
+    width: 100,
     height: 1,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: 'black',
     },
     orText: {
     marginHorizontal: 10,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     },
     signUpButton: {
     backgroundColor: '#333363',
-    width: '80%',
+    width: 300,
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',

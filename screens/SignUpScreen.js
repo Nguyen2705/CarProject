@@ -47,8 +47,10 @@ const SignUpScreen = () =>{
               source={require('../assets/logo2.png')}
               style={styles.logo}
             />
-            <Text style={styles.logoText}>CARVO</Text>
           </View>
+          
+          <Text style={styles.logoText}>CARVO</Text>
+
           <View style={styles.inputContainer}>
             <TextInput
               placeholder='FirstName'
@@ -136,7 +138,7 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     signUpButton: {
-        backgroundColor: '#42B72A',
+        backgroundColor: '#333363',
         width: '80%',
         padding: 15,
         borderRadius: 10,
@@ -149,11 +151,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     loginInContainer: {
-        color: 'black', 
+        color: 'blue', 
         fontSize: 12, 
         alignItems: 'center',
     },
     loginText: {
+        marginTop: 20,
         color: 'black', 
         fontSize: 12, 
         alignItems: 'center',
