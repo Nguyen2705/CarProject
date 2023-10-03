@@ -142,5 +142,6 @@ const styles = StyleSheet.create({
     loginText: {
         color: 'black', 
         fontSize: 12, 
+        alignItems: 'center'
     }
 }); 
