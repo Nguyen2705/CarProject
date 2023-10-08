@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { auth } from '../firebase';
@@ -7,6 +7,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const handleSignOut = () => {
     auth
@@ -17,17 +18,39 @@ const HomeScreen = () => {
       .catch((error) => alert(error.message));
   };
 
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
   return (
     <View style={styles.container}>
       {/* Header with Logo */}
       <View style={styles.header}>
-        <Image source={require('../assets/logo2.png')} style={styles.logo} />
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <Image source={require('../assets/logo2.png')} style={styles.logo} />
+        </View>
+        {/* New Message Button */}
         <View style={styles.headerRight}>
-          <TouchableOpacity onPress={() => {}} style={styles.newMessageButton}>
-            <Ionicons name="chatbubbles-outline" size={30} color="#333363" />
+          <TouchableOpacity onPress={toggleMenu} style={styles.userProfileButton}>
+            <Ionicons name="person-circle-outline" size={35} color="#333363" />
           </TouchableOpacity>
+          {menuVisible && (
+            <View style={styles.profileMenu}>
+              <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <Text style={styles.profileMenuItem}>Profile</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleSignOut}>
+                <Text style={styles.profileMenuItem}>Sign Out</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
+
+      {/* User Profile Button */}
+      <TouchableOpacity onPress={() => {}} style={styles.newMessageButton}>
+        <Ionicons name="chatbubbles-outline" size={30} color="#333363" />
+      </TouchableOpacity>
 
       {/* Content */}
       <View style={styles.content}>
@@ -46,9 +69,9 @@ const HomeScreen = () => {
           <Text style={styles.footerButtonText}>Search</Text>
         </TouchableOpacity>
         {/* Add your New Post button here */}
-      <TouchableOpacity onPress={() => {}} style={styles.newPostButton}>
-        <Ionicons name="add-circle" size={75} color="#faca63" />
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => {}} style={styles.newPostButton}>
+          <Ionicons name="add-circle" size={80} color="#faca63" />
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => {}} style={styles.footerButton}>
           <Ionicons name="notifications" size={24} color="#333363" />
           <Text style={styles.footerButtonText}>Notifications</Text>
@@ -58,11 +81,6 @@ const HomeScreen = () => {
           <Text style={styles.footerButtonText}>Map</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Sign Out Button */}
-      <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
-        <Text style={styles.signOutButtonText}>Sign Out</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -77,27 +95,44 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // Add this to align the message button to the right
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
+    justifyContent: 'space-between',
   },
   logo: {
     width: 45,
     height: 45,
-    alignSelf: 'flex-start',
     marginTop: 45,
-    marginLeft: 25,
+    marginLeft: 45,
   },
-  newMessageButton: {
-    backgroundColor: '#faca63',
+  userProfileButton: {
+    alignItems: 'center',
     padding: 5,
     borderRadius: 10,
     marginTop: 45,
-    marginRight: 5,
+  },
+  profileMenu: {
+    position: 'absolute',
+    top: 30,
+    right: 45,
+    backgroundColor: '#faca63',
+    borderRadius: 10,
+    padding: 1,
+  },
+  profileMenuItem: {
+    fontSize: 18,
+    color: '#333363',
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333363',
+  },
+  
+  headerRight: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-
   content: {
     flex: 1,
     justifyContent: 'center',
@@ -107,6 +142,20 @@ const styles = StyleSheet.create({
   emailText: {
     fontSize: 16,
     marginBottom: 20,
+  },
+  newMessageButton: {
+    position: 'absolute',
+    marginTop: 60,
+    marginLeft: 10,
+    padding: 5,
+    borderRadius: 20,
+    alignItems: 'center',
+  },
+  signOutButtonText: {
+    color: '#333363',
+    fontWeight: 'bold',
+    fontSize: 16,
+    alignSelf: 'flex-end',
   },
   footer: {
     flexDirection: 'row',
@@ -118,6 +167,8 @@ const styles = StyleSheet.create({
   },
   footerButton: {
     alignItems: 'center',
+    justifyContent: 'space-around',
+    flex: 1,
   },
   footerButtonText: {
     color: '#333363',
@@ -126,17 +177,7 @@ const styles = StyleSheet.create({
   },
   newPostButton: {
     alignItems: 'center',
-  },
-  signOutButton: {
-    backgroundColor: '#faca63',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    margin: 20,
-  },
-  signOutButtonText: {
-    color: '#333363',
-    fontWeight: 'bold',
-    fontSize: 16,
+    marginTop: -10,
+    bottom: 23,
   },
 });
