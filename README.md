@@ -22,9 +22,11 @@ This project uses:
 ## Running the project
 
 To run the project, please follow these steps:
-
-1. Clone the github project on the terminal `git clone https://github.com/Nguyen2705/CarProject.git`.
-2. Open the project in VSCode and replace the firebase config object with yours from firebase.
+1. Install Node.js on your computer using this link
+```https://nodejs.org/```
+2. Clone the github project on the terminal
+   ```git clone https://github.com/Nguyen2705/CarProject.git```
+3. Open the project in VSCode and replace the firebase config object with yours from firebase. (You can skip this step if you want to use our firebase server)
    ```js
    const firebaseConfig = {
      apiKey: 'xxx-xxx-xxx-xxx-xxx-xxx-xxx-xxx',
@@ -37,7 +39,7 @@ To run the project, please follow these steps:
      measurementId: 'xxx-xxx-xxx',
    }
    ```
-3. Open new terminal and run the following commands.
+4. Open new terminal and run the following commands.
    ```sh
    cd CarProject
    npm install
@@ -49,4 +51,4 @@ To run the project, please follow these steps:
 
    # If you want to run it on iOS or Android, use a phone to scan the QR code or use a simulator
    ```
-4. Choose your platform and experience the app.
+5. Choose your platform and experience the app.
