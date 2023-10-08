@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   inputContainer: {
-    width: '80%',
+    width: 345,
   },
   input: {
     backgroundColor: '#F0F0F0',
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: '#333363',
-    width: '80%',
+    width: 345,
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
   signUpButton: {
     backgroundColor: '#faca63',
-    width: '80%',
+    width: 345,
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',

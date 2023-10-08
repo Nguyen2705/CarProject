@@ -53,7 +53,7 @@ const SignUpScreen = () =>{
 
           <View style={styles.inputContainer}>
             <TextInput
-              placeholder='FirstName'
+              placeholder='First Name'
               value={firstName}
               onChangeText={(text) => setFirstName(text)}
               style={styles.input}
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     inputContainer: {
-        width: '80%',
+        width: 345,
     },
     input: {
         backgroundColor: '#F0F0F0',
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     },
     signUpButton: {
         backgroundColor: '#333363',
-        width: '80%',
+        width: 345,
         padding: 15,
         borderRadius: 10,
         alignItems: 'center',
