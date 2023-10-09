@@ -47,9 +47,8 @@ const SignUpScreen = () =>{
               source={require('../assets/logo2.png')}
               style={styles.logo}
             />
+            <Text style={styles.logoText}>CARVO</Text>
           </View>
-          
-          <Text style={styles.logoText}>CARVO</Text>
 
           <View style={styles.inputContainer}>
             <TextInput
@@ -118,12 +117,13 @@ const styles = StyleSheet.create({
     },  
     logo: {
         width: 120, 
-        height: 120, 
+        height: 120,
     }, 
     logoText: {
         fontSize: 24, 
         fontWeight: 'bold', 
         marginTop: 10,
+        textAlign: 'center',
     },
     inputContainer: {
         width: 345,

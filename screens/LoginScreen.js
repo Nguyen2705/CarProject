@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { auth } from '../firebase';
 
+
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,6 +48,7 @@ const LoginScreen = () => {
         />
         <Text style={styles.logoText}>CARVO</Text>
       </View>
+      
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
