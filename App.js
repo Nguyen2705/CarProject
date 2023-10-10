@@ -8,6 +8,7 @@ import WelcomeScreen from './screens/WelcomeScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import HomeScreen from './screens/HomeScreen';
 
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
