@@ -1,3 +1,4 @@
+// import { useHistory } from 'react-router-dom';
 import { useNavigation } from '@react-navigation/core';
 import React, { useEffect, useState } from 'react';
 import {
@@ -23,7 +24,7 @@ const SignUpScreen = () =>{
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
           if (user) {
-            navigation.replace('Home');
+            navigation.replace("Login");
           }
     });
 
@@ -36,6 +37,7 @@ const SignUpScreen = () =>{
           .then((userCredentials) => {
             const user = userCredentials.user;
             console.log('Registered with:', user.email);
+
           })
           .catch((error) => alert(error.message = "Invalid Email or Password"));
     };
@@ -111,7 +113,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'white',
     },
-    logocontainer: {
+    logoContainer: {
         alignItems: 'center', 
         marginBottom: 30,
     },  

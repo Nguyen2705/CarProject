@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/core';
 import { auth } from '../firebase';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import BottomTab from '../navigation/BottomTabBar';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -23,65 +24,68 @@ const HomeScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header with Logo */}
-      <View style={styles.header}>
-        <View style={{ flex: 1, alignItems: 'center' }}>
-          <Image source={require('../assets/logo2.png')} style={styles.logo} />
+    <>
+      <View style={styles.container}>
+        {/* Header with Logo */}
+        <View style={styles.header}>
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <Image source={require('../assets/logo2.png')} style={styles.logo} />
+          </View>
+          {/* New Message Button */}
+          <View style={styles.headerRight}>
+            <TouchableOpacity onPress={toggleMenu} style={styles.userProfileButton}>
+              <Ionicons name="person-circle-outline" size={35} color="#333363" />
+            </TouchableOpacity>
+            {menuVisible && (
+              <View style={styles.profileMenu}>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                  <Text style={styles.profileMenuItem}>Profile</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleSignOut}>
+                  <Text style={styles.profileMenuItem}>Sign Out</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
         </View>
-        {/* New Message Button */}
-        <View style={styles.headerRight}>
-          <TouchableOpacity onPress={toggleMenu} style={styles.userProfileButton}>
-            <Ionicons name="person-circle-outline" size={35} color="#333363" />
+
+        {/* User Profile Button */}
+        <TouchableOpacity onPress={() => {}} style={styles.newMessageButton}>
+          <Ionicons name="chatbubbles-outline" size={30} color="#333363" />
+        </TouchableOpacity>
+
+        {/* Content */}
+        <View style={styles.content}>
+          <Text style={styles.emailText}>Email: {auth.currentUser?.email}</Text>
+          {/* Add your car social media content here */}
+        </View>
+
+        {/* Footer */}
+        {/*<View style={styles.footer}>
+          <TouchableOpacity onPress={() => navigate.replace('Home')} style={styles.footerButton}>
+            <Ionicons name="home" size={24} color="#333363" />
+            <Text style={styles.footerButtonText}>Home</Text>
           </TouchableOpacity>
-          {menuVisible && (
-            <View style={styles.profileMenu}>
-              <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                <Text style={styles.profileMenuItem}>Profile</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleSignOut}>
-                <Text style={styles.profileMenuItem}>Sign Out</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+          <TouchableOpacity onPress={() => {}} style={styles.footerButton}>
+            <Ionicons name="search" size={24} color="#333363" />
+            <Text style={styles.footerButtonText}>Search</Text>
+          </TouchableOpacity>
+          {/* Add your New Post button here */}
+          {/* <TouchableOpacity onPress={() => {}} style={styles.newPostButton}>
+            <Ionicons name="add-circle" size={80} color="#faca63" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {}} style={styles.footerButton}>
+            <Ionicons name="notifications" size={24} color="#333363" />
+            <Text style={styles.footerButtonText}>Notifications</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigate.replace('Map')} style={styles.footerButton}>
+            <FontAwesome name="map" size={24} color="#333363" />
+            <Text style={styles.footerButtonText}>Map</Text>
+          </TouchableOpacity>
+        </View> */}
       </View>
-
-      {/* User Profile Button */}
-      <TouchableOpacity onPress={() => navigation.replace()} style={styles.newMessageButton}>
-        <Ionicons name="chatbubbles-outline" size={30} color="#333363" />
-      </TouchableOpacity>
-
-      {/* Content */}
-      <View style={styles.content}>
-        <Text style={styles.emailText}>Email: {auth.currentUser?.email}</Text>
-        {/* Add your car social media content here */}
-      </View>
-
-      {/* Footer */}
-      <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigate.replace('Home')} style={styles.footerButton}>
-          <Ionicons name="home" size={24} color="#333363" />
-          <Text style={styles.footerButtonText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}} style={styles.footerButton}>
-          <Ionicons name="search" size={24} color="#333363" />
-          <Text style={styles.footerButtonText}>Search</Text>
-        </TouchableOpacity>
-        {/* Add your New Post button here */}
-        <TouchableOpacity onPress={() => {}} style={styles.newPostButton}>
-          <Ionicons name="add-circle" size={80} color="#faca63" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}} style={styles.footerButton}>
-          <Ionicons name="notifications" size={24} color="#333363" />
-          <Text style={styles.footerButtonText}>Notifications</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}} style={styles.footerButton}>
-          <FontAwesome name="map" size={24} color="#333363" />
-          <Text style={styles.footerButtonText}>Map</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      <BottomTab/>
+    </>
   );
 };
 
