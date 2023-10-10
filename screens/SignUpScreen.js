@@ -93,10 +93,10 @@ const SignUpScreen = () =>{
             <Text style={styles.signUpButtonText}>Sign Up</Text>
           </TouchableOpacity>
           <View style={styles.loginInContainer}>
-            <Text style={styles.loginText}>Already have an account?</Text>
+            <Text style={styles.loginText}>Already have an account? 
             <TouchableOpacity onPress={() => navigation.replace("Login")} style={styles.loginInContainer}>
-                <Text style={styles.loginInContainer}>Login</Text>
-            </TouchableOpacity>
+                <Text style={styles.loginInContainer}> Login</Text>
+            </TouchableOpacity></Text>
           </View>
         </KeyboardAvoidingView>
     );
@@ -151,7 +151,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     loginInContainer: {
-        color: 'blue', 
+        fontWeight: 'bold',
+        color: '#faca63', 
         fontSize: 12, 
         alignItems: 'center',
     },
