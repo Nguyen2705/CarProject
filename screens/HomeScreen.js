@@ -60,7 +60,7 @@ const HomeScreen = () => {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => {}} style={styles.footerButton}>
+        <TouchableOpacity onPress={() => navigate.replace()} style={styles.footerButton}>
           <Ionicons name="home" size={24} color="#333363" />
           <Text style={styles.footerButtonText}>Home</Text>
         </TouchableOpacity>

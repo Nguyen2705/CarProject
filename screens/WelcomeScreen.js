@@ -1,6 +1,5 @@
 import { useNavigation } from '@react-navigation/core';
 import React from 'react';
-// import FastImage from 'react-native-fast-image'
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -19,7 +18,6 @@ const WelcomeScreen = () => {
                 <Image
                     source={require('../assets/gif.gif')}
                     style={styles.logo}
-                    // resizeMode={FastImage.resizeMode.contain}
                 />
                 <Text style={styles.logoText}>WELCOME TO CARVO</Text>
             </View>
