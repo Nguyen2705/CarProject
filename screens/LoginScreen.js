@@ -21,7 +21,7 @@ const LoginScreen = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        navigation.replace('TabBar');
+        navigation.replace('HomeScreen');
       }
     });
 

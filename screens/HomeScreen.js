@@ -48,7 +48,7 @@ const HomeScreen = () => {
       </View>
 
       {/* User Profile Button */}
-      <TouchableOpacity onPress={() => {}} style={styles.newMessageButton}>
+      <TouchableOpacity onPress={() => navigation.replace()} style={styles.newMessageButton}>
         <Ionicons name="chatbubbles-outline" size={30} color="#333363" />
       </TouchableOpacity>
 
@@ -60,7 +60,7 @@ const HomeScreen = () => {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigate.replace()} style={styles.footerButton}>
+        <TouchableOpacity onPress={() => navigate.replace('Home')} style={styles.footerButton}>
           <Ionicons name="home" size={24} color="#333363" />
           <Text style={styles.footerButtonText}>Home</Text>
         </TouchableOpacity>
