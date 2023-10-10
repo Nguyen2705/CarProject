@@ -47,8 +47,8 @@ const HomeScreen = () => {
         </View>
       </View>
 
-      {/* User Profile Button */}
-      <TouchableOpacity onPress={() => navigation.replace()} style={styles.newMessageButton}>
+      {/* Chat Button */}
+      <TouchableOpacity onPress={() => navigation.replace('Chat')} style={styles.newMessageButton}>
         <Ionicons name="chatbubbles-outline" size={30} color="#333363" />
       </TouchableOpacity>
 
