@@ -35,6 +35,10 @@ const SignUpScreen = () =>{
           .createUserWithEmailAndPassword(email, password)
           .then((userCredentials) => {
             const user = userCredentials.user;
+            user.updateProfile({
+              displayName: firstName + " " + lastName,
+              photoURL: 'https://www.trackergps.com/canvas/images/icons/avatar.jpg'
+            }); 
             console.log('Registered with:', user.email);
           })
           .catch((error) => alert(error.message = "Invalid Email or Password"));

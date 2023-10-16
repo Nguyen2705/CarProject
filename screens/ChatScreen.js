@@ -25,7 +25,7 @@ const ChatScreen = () => {
           name: doc.data().userName, // Replace with your user name logic
         },
       }));
-      setMessages(messageList);
+      setMessages(messageList.reverse());
       setLoading(false); // Set loading to false when messages are loaded
     });
 
@@ -44,6 +44,7 @@ const ChatScreen = () => {
       timestamp: createdAt,
       userId: auth.currentUser.uid, // Replace with your user ID logic
       userName: auth.currentUser.displayName, // Replace with your user name logic
+      userImage: auth.currentUser.photoURL, // Replace with your user image logic
     });
   }, []);
 
@@ -55,7 +56,7 @@ const ChatScreen = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
-          <Ionicons name="arrow-back" size={30} color="#333363" />
+          <Ionicons name="chevron-back-outline" size={30} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Chat Room</Text>
       </View>
@@ -64,9 +65,11 @@ const ChatScreen = () => {
       ) : (
         <GiftedChat
           messages={messages}
+          showAvatarForEveryMessage={true}
           onSend={messages => onSend(messages)}
           user={{
             _id: auth.currentUser.uid, // Replace with your user ID logic
+            avatar: auth.currentUser.photoURL, // Replace with your user image logic
           }}
           renderSend={(props) => (
             <Send {...props}>
@@ -91,13 +94,14 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 40,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
     justifyContent: 'center',
     backgroundColor: '#333363', // Header background color
   },
   headerText: {
+    top: 20,
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white', // Header text color
@@ -109,18 +113,16 @@ const styles = StyleSheet.create({
   },
   sendButtonContainer: {
     marginRight: 10,
-    marginBottom: 10,
+    marginBottom: 30,
   },
   sendButtonText: {
+    top: '80%',
     color: '#333363',
     fontWeight: 'bold',
   },
   goBackButton: {
     position: 'absolute',
-    top: 20,
-    left: 10,
-    padding: 10,
-    borderRadius: 20,
-    backgroundColor: 'white', // Go back button background color
+    top: 60,
+    left: 15,
   },
 });
