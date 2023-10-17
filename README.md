@@ -46,8 +46,8 @@ To run the project, please follow these steps:
 6. Open new terminal and run the following commands.
    ```sh
    cd CarProject
-   npm install
-   npm start
+   yarn install
+   yarn start
    
    # You will have the option to either run it on iOS, Android or Web
    
