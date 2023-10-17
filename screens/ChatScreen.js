@@ -6,6 +6,7 @@ import 'firebase/compat/firestore';
 import { auth } from '../firebase'; // Import the 'auth' object from your firebase.js file
 import { GiftedChat, Send } from 'react-native-gifted-chat';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
@@ -90,6 +91,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F7F7',
+    paddingBottom: 20,
   },
   header: {
     flexDirection: 'row',
