@@ -43,7 +43,7 @@ const ProfileScreen = () => {
             </View>
             <View style={styles.stats}>
                 <View style={styles.stat}>
-                    <Text style={styles.statNumber}>100</Text>
+                    <Text style={styles.statNumber}>3</Text>
                     <Text style={styles.statTitle}>Posts</Text>
                 </View>
                 <View style={styles.stat}>
@@ -51,22 +51,22 @@ const ProfileScreen = () => {
                     <Text style={styles.statTitle}>Followers</Text>
                 </View>
                 <View style={styles.stat}>
-                    <Text style={styles.statNumber}>500</Text>
+                    <Text style={styles.statNumber}>200</Text>
                     <Text style={styles.statTitle}>Following</Text>
                 </View>
             </View>
             <View style={styles.photos}>
                 <Image
-                    style={styles.photo}
-                    source={{ uri: 'https://picsum.photos/id/237/200/300' }}
+                    style={{...styles.photo, width: '32%', height: '70%'}}
+                    source={{ uri: 'https://utatickets.com/_img/venues/college-park-center.jpg' }}
                 />
                 <Image
-                    style={styles.photo}
-                    source={{ uri: 'https://picsum.photos/id/238/200/300' }}
+                    style={{...styles.photo, width: '32%', height: '70%'}}
+                    source={{ uri: 'https://pa-hrsuite-production.s3.amazonaws.com/2918/docs/457749.jpg' }}
                 />
                 <Image
-                    style={styles.photo}
-                    source={{ uri: 'https://picsum.photos/id/239/200/300' }}
+                    style={{...styles.photo, width: '32%', height: '70%'}}
+                    source={{ uri: 'https://www.star-telegram.com/latest-news/6eav0b/picture240316926/alternates/FREE_1140/Heart%20of%20Arlington%20neighborhood%2013.JPG' }}
                 />
             </View>
         </View>
@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
         marginTop: 50,
     },
     avatar: {
+        marginTop: 10,
         width: 100,
         height: 100,
         borderRadius: 50,
@@ -122,11 +123,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        marginTop: 30,
+        marginTop: 10,
         paddingHorizontal: 10,
     },
     photo: {
-        width: '32%',
         aspectRatio: 1,
         marginBottom: 10,
     },
