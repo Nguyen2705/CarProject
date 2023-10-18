@@ -36,7 +36,7 @@ const HomeScreen = () => {
           </TouchableOpacity>
           {menuVisible && (
             <View style={styles.profileMenu}>
-              <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+              <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                 <Text style={styles.profileMenuItem}>Profile</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleSignOut}>
