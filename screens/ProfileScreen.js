@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebase'; // Import the 'auth' object from your firebase.js file
@@ -9,6 +9,7 @@ import getImageURL from '../backend/fetchImage';
 const ProfileScreen = () => {
     const navigation = useNavigation();
     const [user, setUser] = useState(null);
+    const [isModalVisible, setModalVisible] = useState(false);
     const [imageURL, setImageURL] = useState(null);
 
 
@@ -28,6 +29,11 @@ const ProfileScreen = () => {
     const handleGoBack = () => {
         navigation.goBack();
     };
+
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+      };
+
 
     // Current state: function can upload a file to Firebase Storage,
     // and get the URL of the uploaded file.
@@ -57,10 +63,12 @@ const ProfileScreen = () => {
 
                 {user && (
                     <>
-                        <Image
-                            style={styles.avatar}
-                            source={{ uri: user.photoURL }}
-                        />
+                        <TouchableOpacity onPress={toggleModal}>
+                           <Image
+                              style={styles.avatar}
+                              source={{ uri: user.photoURL }}
+                           />
+                        </TouchableOpacity>
                         <Text style={styles.name}>{user.name}</Text>
                         <Text style={styles.bio}>{user.bio}</Text>
                     </>
@@ -86,7 +94,7 @@ const ProfileScreen = () => {
 
             <View style={styles.stats}>
                 <View style={styles.stat}>
-                    <Text style={styles.statNumber}>100</Text>
+                    <Text style={styles.statNumber}>3</Text>
                     <Text style={styles.statTitle}>Posts</Text>
                 </View>
                 <View style={styles.stat}>
@@ -94,7 +102,7 @@ const ProfileScreen = () => {
                     <Text style={styles.statTitle}>Followers</Text>
                 </View>
                 <View style={styles.stat}>
-                    <Text style={styles.statNumber}>500</Text>
+                    <Text style={styles.statNumber}>200</Text>
                     <Text style={styles.statTitle}>Following</Text>
                 </View>
             </View>
@@ -106,13 +114,33 @@ const ProfileScreen = () => {
                 <Image
                     style={{...styles.photo, width: '32%', height: '70%'}}
                     source={{ uri: 'https://pa-hrsuite-production.s3.amazonaws.com/2918/docs/457749.jpg' }}
+                    />
+                <Image
+                    style={{...styles.photo, width: '32%', height: '70%'}}
+                    source={{ uri: 'https://pa-hrsuite-production.s3.amazonaws.com/2918/docs/457749.jpg' }}
                 />
                 <Image
                     style={{...styles.photo, width: '32%', height: '70%'}}
-                    source={{ uri: 'https://www.star-telegram.com/latest-news/6eav0b/picture240316926/alternates/FREE_1140/Heart%20of%20Arlington%20neighborhood%2013.JPG' }}
+                    source={{ uri: 'https://www.brwarch.com/wp-content/uploads/2019/11/UTA_hereford-02A.jpg' }}
                 />
             </View>
-
+            <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={isModalVisible}
+                  >
+                    <View style={styles.modalContainer}>
+                      <TouchableOpacity style={styles.modalOption} onPress={() => {}}>
+                        <Text style={styles.modalOptionText}>Change Profile Picture</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.modalOption} onPress={toggleModal}>
+                        <Text style={styles.modalOptionText}>View Profile Picture</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.modalCloseButton} onPress={toggleModal}>
+                        <Text style={styles.modalCloseButtonText}>Close</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </Modal>
         </View>
     );
 };
@@ -127,6 +155,7 @@ const styles = StyleSheet.create({
         marginTop: 50,
     },
     avatar: {
+        marginTop: 10,
         width: 100,
         height: 100,
         borderRadius: 50,
@@ -166,11 +195,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        marginTop: 30,
+        marginTop: 10,
         paddingHorizontal: 10,
     },
     photo: {
-        width: '32%',
         aspectRatio: 1,
         marginBottom: 10,
     },
@@ -180,7 +208,40 @@ const styles = StyleSheet.create({
         left: 10,
         zIndex: 2,
     },
-    upLoadButton: {
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      },
+      modalOptions: {
+          backgroundColor: 'white',
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          padding: 20,
+        },
+      modalOption: {
+        backgroundColor: 'white',
+        padding: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+      },
+      modalOptionText: {
+        fontSize: 18,
+        textAlign: 'center',
+      },
+      modalCloseButton: {
+        backgroundColor: 'white',
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+        padding: 20,
+        marginTop: 10,
+      },
+      modalCloseButtonText: {
+        fontSize: 18,
+        textAlign: 'center',
+        color: 'red',
+      },
+      upLoadButton: {
         position: 'absolute',
         top: 10,
         right: 50,
