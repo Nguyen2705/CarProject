@@ -3,10 +3,15 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebase'; // Import the 'auth' object from your firebase.js file
+import uploadFile from '../backend/uploadFile';
+import getImageURL from '../backend/fetchImage';
 
 const ProfileScreen = () => {
     const navigation = useNavigation();
     const [user, setUser] = useState(null);
+    const [imageURL, setImageURL] = useState(null);
+
+
 
     useEffect(() => {
         // Retrieve user information from Firebase Authentication
@@ -24,12 +29,32 @@ const ProfileScreen = () => {
         navigation.goBack();
     };
 
+    // Current state: function can upload a file to Firebase Storage,
+    // and get the URL of the uploaded file.
+    // Next state: change this function to create post
+    // Insight: new post will let user upload images, add caption, and so on.
+    // We can reuse this function in homescreen to create new post
+    const handleUploadAndPostFile = async (e) => {
+
+        //get selected file, we only accept single image uploading
+        const file = e.target.files[0];
+
+        if(file)
+        {
+            await uploadFile(file.name, file);
+            const url = await getImageURL(file.name);
+            setImageURL(url);
+        }
+    };
+
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
                     <Ionicons name="chevron-back-outline" size={30} color="#333363" />
                 </TouchableOpacity>
+
                 {user && (
                     <>
                         <Image
@@ -41,6 +66,24 @@ const ProfileScreen = () => {
                     </>
                 )}
             </View>
+
+            {/* button to upload file, sua lai nha kenny*/}
+        
+
+            <View style={styles.uploadButtonContainer}>
+                    <label htmlFor="fileInput" style={styles.uploadButton}>
+                    <Ionicons name="skull-outline" size={50} color="#F4D03F" />
+                    </label>
+                    <input
+                    id="fileInput"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={handleUploadAndPostFile}
+                    />
+            </View>
+            {/* upload button end */}
+
             <View style={styles.stats}>
                 <View style={styles.stat}>
                     <Text style={styles.statNumber}>100</Text>
@@ -57,18 +100,19 @@ const ProfileScreen = () => {
             </View>
             <View style={styles.photos}>
                 <Image
-                    style={styles.photo}
-                    source={{ uri: 'https://picsum.photos/id/237/200/300' }}
+                    style={{...styles.photo, width: '32%', height: '70%'}}
+                    source={{ uri: imageURL  }}
                 />
                 <Image
-                    style={styles.photo}
-                    source={{ uri: 'https://picsum.photos/id/238/200/300' }}
+                    style={{...styles.photo, width: '32%', height: '70%'}}
+                    source={{ uri: 'https://pa-hrsuite-production.s3.amazonaws.com/2918/docs/457749.jpg' }}
                 />
                 <Image
-                    style={styles.photo}
-                    source={{ uri: 'https://picsum.photos/id/239/200/300' }}
+                    style={{...styles.photo, width: '32%', height: '70%'}}
+                    source={{ uri: 'https://www.star-telegram.com/latest-news/6eav0b/picture240316926/alternates/FREE_1140/Heart%20of%20Arlington%20neighborhood%2013.JPG' }}
                 />
             </View>
+
         </View>
     );
 };
@@ -134,6 +178,12 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 10,
         left: 10,
+        zIndex: 2,
+    },
+    upLoadButton: {
+        position: 'absolute',
+        top: 10,
+        right: 50,
         zIndex: 2,
     },
 });
