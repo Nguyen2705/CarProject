@@ -50,7 +50,7 @@ const ChatScreen = () => {
   }, []);
 
   const handleGoBack = () => {
-    navigation.navigate('Home');
+    navigation.goBack();
   };
 
   return (

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   Image,
+  Platform,
 } from 'react-native';
 import { auth } from '../firebase';
 
@@ -19,6 +20,8 @@ const SignUpScreen = () =>{
     
 
     const navigation = useNavigation();
+
+    const KeyboardAvoidingBehavior = Platform.OS === 'ios' ? 'padding' : undefined;
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -45,7 +48,7 @@ const SignUpScreen = () =>{
     };
 
     return (
-        <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <KeyboardAvoidingView style={styles.container} behavior={KeyboardAvoidingBehavior} enabled={Platform.OS === 'ios'}>
           <View style={styles.logoContainer}>
             <Image
               source={require('../assets/logo2.png')}

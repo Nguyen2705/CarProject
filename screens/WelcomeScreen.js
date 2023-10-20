@@ -21,7 +21,7 @@ const WelcomeScreen = () => {
                 />
                 <Text style={styles.logoText}>WELCOME TO CARVO</Text>
             </View>
-            <TouchableOpacity onPress={() => navigation.replace('Login')} style={styles.loginButton}>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.loginButton}>
                 <Text style={styles.loginButtonText}>Log In</Text>
             </TouchableOpacity>
             <View style={styles.orContainer}>
@@ -29,7 +29,7 @@ const WelcomeScreen = () => {
                 <Text style={styles.orText}>OR</Text>
                 <View style={styles.line}/>
             </View>
-            <TouchableOpacity onPress={() => navigation.replace('SignUp')} style={styles.signUpButton}>
+            <TouchableOpacity onPress={() => navigation.navigate('SignUp')} style={styles.signUpButton}>
                 <Text style={styles.signUpButtonText}>Sign Up</Text>
             </TouchableOpacity>
         </KeyboardAvoidingView>

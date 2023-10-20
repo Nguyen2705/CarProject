@@ -23,6 +23,7 @@
     "expo-constants": "~14.4.2",
     "expo-crypto": "~12.4.1",
     "expo-dev-client": "~2.4.11",
+    "expo-image-picker": "^14.5.0",
     "expo-random": "~13.2.0",
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
