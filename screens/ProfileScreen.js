@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebase'; // Import the 'auth' object from your firebase.js file
@@ -7,6 +7,7 @@ import { auth } from '../firebase'; // Import the 'auth' object from your fireba
 const ProfileScreen = () => {
     const navigation = useNavigation();
     const [user, setUser] = useState(null);
+    const [isModalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         // Retrieve user information from Firebase Authentication
@@ -24,6 +25,11 @@ const ProfileScreen = () => {
         navigation.goBack();
     };
 
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+      };
+
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -32,10 +38,12 @@ const ProfileScreen = () => {
                 </TouchableOpacity>
                 {user && (
                     <>
-                        <Image
-                            style={styles.avatar}
-                            source={{ uri: user.photoURL }}
-                        />
+                        <TouchableOpacity onPress={toggleModal}>
+                           <Image
+                              style={styles.avatar}
+                              source={{ uri: user.photoURL }}
+                           />
+                        </TouchableOpacity>
                         <Text style={styles.name}>{user.name}</Text>
                         <Text style={styles.bio}>{user.bio}</Text>
                     </>
@@ -66,9 +74,26 @@ const ProfileScreen = () => {
                 />
                 <Image
                     style={{...styles.photo, width: '32%', height: '70%'}}
-                    source={{ uri: 'https://www.star-telegram.com/latest-news/6eav0b/picture240316926/alternates/FREE_1140/Heart%20of%20Arlington%20neighborhood%2013.JPG' }}
+                    source={{ uri: 'https://www.brwarch.com/wp-content/uploads/2019/11/UTA_hereford-02A.jpg' }}
                 />
             </View>
+            <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={isModalVisible}
+                  >
+                    <View style={styles.modalContainer}>
+                      <TouchableOpacity style={styles.modalOption} onPress={() => {}}>
+                        <Text style={styles.modalOptionText}>Change Profile Picture</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.modalOption} onPress={toggleModal}>
+                        <Text style={styles.modalOptionText}>View Profile Picture</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.modalCloseButton} onPress={toggleModal}>
+                        <Text style={styles.modalCloseButtonText}>Close</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </Modal>
         </View>
     );
 };
@@ -136,6 +161,39 @@ const styles = StyleSheet.create({
         left: 10,
         zIndex: 2,
     },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      },
+      modalOptions: {
+          backgroundColor: 'white',
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          padding: 20,
+        },
+      modalOption: {
+        backgroundColor: 'white',
+        padding: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+      },
+      modalOptionText: {
+        fontSize: 18,
+        textAlign: 'center',
+      },
+      modalCloseButton: {
+        backgroundColor: 'white',
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+        padding: 20,
+        marginTop: 10,
+      },
+      modalCloseButtonText: {
+        fontSize: 18,
+        textAlign: 'center',
+        color: 'red',
+      },
 });
 
 export default ProfileScreen;
