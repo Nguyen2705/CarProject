@@ -1,4 +1,3 @@
-// import { useHistory } from 'react-router-dom';
 import { useNavigation } from '@react-navigation/core';
 import React, { useEffect, useState } from 'react';
 import {
@@ -24,7 +23,7 @@ const SignUpScreen = () =>{
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
           if (user) {
-            navigation.replace("Login");
+            navigation.replace("Home");
           }
     });
 
@@ -37,7 +36,6 @@ const SignUpScreen = () =>{
           .then((userCredentials) => {
             const user = userCredentials.user;
             console.log('Registered with:', user.email);
-
           })
           .catch((error) => alert(error.message = "Invalid Email or Password"));
     };
@@ -83,14 +81,6 @@ const SignUpScreen = () =>{
               placeholderTextColor="#B0B0B0"
             />
           </View>
-          {/* <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Log In</Text>
-          </TouchableOpacity>
-          <View style={styles.orContainer}>
-            <View style={styles.line} />
-            <Text style={styles.orText}>OR</Text>
-            <View style={styles.line} />
-          </View> */}
           <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
             <Text style={styles.signUpButtonText}>Sign Up</Text>
           </TouchableOpacity>

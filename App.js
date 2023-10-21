@@ -12,7 +12,7 @@ import ChatScreen from './screens/ChatScreen';
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+function Stack() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -24,6 +24,41 @@ export default function App() {
       </Stack.Navigator>
     </NavigationContainer>
   );
+}
+
+
+export default function App() {
+  return (
+    <NavigationContainer>
+        <Tab.Navigator
+            screenOptions={() => ({
+                headerShown: false,
+                tabBarIcon: () => {
+                    let Icon; 
+                    if(route.name == 'Home') {
+                        Icon = <Foundation name='home' size={25} />;
+                    } else if (route.name == 'Search') {
+                        Icon = <AntDesign name='search1' size={25} />;
+                    } else if (route.name == 'Notification') {
+                        Icon = <Ionicons name='notifications-outline' size={25} />;
+                    } else {
+                        Icon = <Entypo name='map' size={25} />; 
+                    }
+                    return Icon; 
+            },
+            })}>
+            <Tab.Screen name='Home' component={HomeScreen} />
+            <Tab.Screen name='Search' component={HomeScreen} />
+            <Tab.Screen name='Notification' component={HomeScreen} />
+            <Tab.Screen name='Map' component={HomeScreen} />
+        </Tab.Navigator>
+    </NavigationContainer>
+); 
+}
+
+
+export default function App() {
+
 }
 
 const styles = StyleSheet.create({
