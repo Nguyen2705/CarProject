@@ -1,9 +1,50 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Image, SafeAreaView } from 'react-native';
+import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import Post from '../navigation/Post';
 import { useNavigation } from '@react-navigation/core';
 import { auth } from '../firebase';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Header from '../navigation/Header';
+
+
+// test case for profile
+const User = [
+  {
+    username: 'khoinguyen',
+    image: require('../assets/cyper_punk.jpg'), 
+  }
+];
+
+const testPost = [
+  {
+    username: User[0].username, 
+    imageUrl: require('../assets/cyper_punk.jpg'), 
+    likes: 12431, 
+    caption: 'Back to HomeTown', 
+    profile_picture: User[0].image, 
+    comments: [
+        {
+            username: 'khoinguyen', 
+            comment: 'Wow', 
+        }, 
+    ],
+  },
+
+  {
+    username: User[0].username, 
+    imageUrl: require('../assets/cyper_punk.jpg'), 
+    likes: 12431, 
+    caption: 'Back to HomeTown', 
+    profile_picture: User[0].image, 
+    comments: [
+        {
+            username: 'khoinguyen', 
+            comment: 'Wow', 
+        }, 
+    ],
+  },
+];
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -25,12 +66,12 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       {/* Header with Logo */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <View style={{ flex: 1, alignItems: 'center' }}>
           <Image source={require('../assets/logo2.png')} style={styles.logo} />
-        </View>
+        </View> */}
         {/* New Message Button */}
-        <View style={styles.headerRight}>
+        {/* <View style={styles.headerRight}>
           <TouchableOpacity onPress={toggleMenu} style={styles.userProfileButton}>
             <Ionicons name="person-circle-outline" size={35} color="#333363" />
           </TouchableOpacity>
@@ -45,21 +86,37 @@ const HomeScreen = () => {
             </View>
           )}
         </View>
-      </View>
+      </View> */}
 
       {/* Chat Button */}
-      <TouchableOpacity onPress={() => navigation.navigate('Chat')} style={styles.newMessageButton}>
+      {/* <TouchableOpacity onPress={() => navigation.navigate('Chat')} style={styles.newMessageButton}>
         <Ionicons name="chatbubbles-outline" size={30} color="#333363" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Content */}
-      <View style={styles.content}>
+      {/* <View style={styles.content}>
         <Text style={styles.emailText}>Email: {auth.currentUser?.email}</Text>
         {/* Add your car social media content here */}
-      </View>
+      {/* </View> */}
+      
+      <View style={styles.headerBackground}> 
+          <Header />
+      </View>   
+
+      {/* Display all post */}
+      <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.container}>
+        <ScrollView>
+          {/* Render the test post */}
+          {testPost.map((post, index) => (
+            <Post post={post} key={index} />
+          ))}
+        </ScrollView>
+      </SafeAreaView>
+      </GestureHandlerRootView>
 
       {/* Footer */}
-      <View style={styles.footer}>
+      {/* <View style={styles.footer}>
         <TouchableOpacity onPress={() => navigation.replace('Home')} style={styles.footerButton}>
           <Ionicons name="home" size={24} color="#333363" />
           <Text style={styles.footerButtonText}>Home</Text>
@@ -67,9 +124,9 @@ const HomeScreen = () => {
         <TouchableOpacity onPress={() => {}} style={styles.footerButton}>
           <Ionicons name="search" size={24} color="#333363" />
           <Text style={styles.footerButtonText}>Search</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/* Add your New Post button here */}
-        <TouchableOpacity onPress={() => {}} style={styles.newPostButton}>
+        {/* <TouchableOpacity onPress={() => {}} style={styles.newPostButton}>
           <Ionicons name="add-circle" size={80} color="#faca63" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {}} style={styles.footerButton}>
@@ -80,8 +137,8 @@ const HomeScreen = () => {
           <FontAwesome name="map" size={24} color="#333363" />
           <Text style={styles.footerButtonText}>Map</Text>
         </TouchableOpacity>
-      </View>
-    </View>
+      </View> */}
+    </View> 
   );
 };
 
@@ -90,7 +147,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
   },
   header: {
     flexDirection: 'row',
@@ -98,6 +155,13 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
+    justifyContent: 'space-between',
+  },
+  headerBackground: {
+    backgroundColor: 'white',
+    paddingVertical: 15, 
+    paddingHorizontal: 18, 
+    flexDirection: 'row', 
     justifyContent: 'space-between',
   },
   logo: {
@@ -111,6 +175,12 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 10,
     marginTop: 45,
+  },
+  logoStyle: {
+    height: 30,
+    width: 30,
+    marginTop: 10,
+    marginLeft: 23,
   },
   profileMenu: {
     position: 'absolute',
