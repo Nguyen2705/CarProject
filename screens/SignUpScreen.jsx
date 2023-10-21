@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   Image,
+  Platform,
 } from 'react-native';
 import { auth } from '../firebase';
 
@@ -19,6 +20,8 @@ const SignUpScreen = () =>{
     
 
     const navigation = useNavigation();
+
+    const KeyboardAvoidingBehavior = Platform.OS === 'ios' ? 'padding' : undefined;
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -35,13 +38,17 @@ const SignUpScreen = () =>{
           .createUserWithEmailAndPassword(email, password)
           .then((userCredentials) => {
             const user = userCredentials.user;
+            user.updateProfile({
+              displayName: firstName + " " + lastName,
+              photoURL: 'https://www.trackergps.com/canvas/images/icons/avatar.jpg'
+            }); 
             console.log('Registered with:', user.email);
           })
           .catch((error) => alert(error.message = "Invalid Email or Password"));
     };
 
     return (
-        <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <KeyboardAvoidingView style={styles.container} behavior={KeyboardAvoidingBehavior} enabled={Platform.OS === 'ios'}>
           <View style={styles.logoContainer}>
             <Image
               source={require('../assets/logo2.png')}

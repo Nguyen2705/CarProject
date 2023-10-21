@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -8,7 +8,9 @@ import {
   TouchableOpacity,
   View,
   Image,
+  Platform,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebase';
 
 
@@ -17,6 +19,12 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
 
   const navigation = useNavigation();
+
+  const KeyboardAvoidingBehavior = Platform.OS === 'ios' ? 'padding' : undefined;
+
+  const handleGoBack = () => {
+        navigation.goBack();
+    };
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -40,7 +48,12 @@ const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
+    <KeyboardAvoidingView style={styles.container} behavior={KeyboardAvoidingBehavior} enabled={Platform.OS === 'ios'}>
+      
+      <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
+          <Ionicons name="chevron-back-outline" size={30} color="#333363" />
+      </TouchableOpacity>
+
       <View style={styles.logoContainer}>
         <Image
           source={require('../assets/logo1.jpg')}
@@ -166,5 +179,10 @@ const styles = StyleSheet.create({
     color: '#333363',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  goBackButton: {
+    position: 'absolute',
+    top: 60,
+    left: 15,
   },
 });
