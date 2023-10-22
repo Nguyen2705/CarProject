@@ -26,7 +26,7 @@ const SignUpScreen = () =>{
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
           if (user) {
-            navigation.replace('Home');
+            navigation.replace("Home");
           }
     });
 
@@ -88,14 +88,6 @@ const SignUpScreen = () =>{
               placeholderTextColor="#B0B0B0"
             />
           </View>
-          {/* <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Log In</Text>
-          </TouchableOpacity>
-          <View style={styles.orContainer}>
-            <View style={styles.line} />
-            <Text style={styles.orText}>OR</Text>
-            <View style={styles.line} />
-          </View> */}
           <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
             <Text style={styles.signUpButtonText}>Sign Up</Text>
           </TouchableOpacity>
@@ -118,7 +110,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'white',
     },
-    logocontainer: {
+    logoContainer: {
         alignItems: 'center', 
         marginBottom: 30,
     },  
