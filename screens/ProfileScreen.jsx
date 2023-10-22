@@ -84,7 +84,10 @@ const ProfileScreen = () => {
                   >
                     <View style={styles.modalContainer}>
                       <TouchableOpacity style={styles.modalOption} onPress={() => {}}>
-                        <Text style={styles.modalOptionText}>Change Profile Picture</Text>
+                        <Text style={styles.modalOptionText}>Choose From Library</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.modalOption} onPress={() => {}}>
+                        <Text style={styles.modalOptionText}>Take Photo</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.modalOption} onPress={toggleModal}>
                         <Text style={styles.modalOptionText}>View Profile Picture</Text>
@@ -164,14 +167,8 @@ const styles = StyleSheet.create({
     modalContainer: {
         flex: 1,
         justifyContent: 'flex-end',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
       },
-      modalOptions: {
-          backgroundColor: 'white',
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-          padding: 20,
-        },
       modalOption: {
         backgroundColor: 'white',
         padding: 15,
@@ -181,6 +178,7 @@ const styles = StyleSheet.create({
       modalOptionText: {
         fontSize: 18,
         textAlign: 'center',
+        color: 'rgb(10, 132, 255)',
       },
       modalCloseButton: {
         backgroundColor: 'white',
@@ -188,6 +186,7 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 20,
         padding: 20,
         marginTop: 10,
+        marginBottom: 20,
       },
       modalCloseButtonText: {
         fontSize: 18,
