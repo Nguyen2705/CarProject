@@ -45,9 +45,12 @@ const SignUpScreen = () =>{
         auth
           .createUserWithEmailAndPassword(email, password)
           .then((userCredentials) => {
+            
 
+            //After create an account, it will store default data
+            //for new account into firestore database
             userRef
-                .doc(firebase.auth().userCredentials.uid)
+                .doc(userCredentials.user.uid)
                 .set({
                     firstName: firstName,
                     lastName: lastName,
