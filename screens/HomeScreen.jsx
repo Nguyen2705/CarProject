@@ -89,7 +89,7 @@ const HomeScreen = () => {
                 <Text style={styles.profileMenuItem}>Profile</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleSignOut}>
-                <Text style={styles.profileMenuItem}>Sign Out</Text>
+                <Text style={styles.signOutMenuItem}>Sign Out</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -205,6 +205,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderBottomWidth: 0.5,
     borderBottomColor: '#333363',
+  },
+
+  signOutMenuItem: {
+    fontSize: 18,
+    color: '#333363',
+    paddingVertical: 6,
+    paddingHorizontal: 16,
   },
   
   headerRight: {
