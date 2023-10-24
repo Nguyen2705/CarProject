@@ -36,13 +36,14 @@ const Header = () => {
                         justifyContent: 'space-between', 
                         marginTop: 20, 
                         marginLeft: 10, 
-                        fontWeight: 500
+                        fontWeight: 500, 
+                        fontFamily: ''
                         }}>CARVO</Text>
             </View>    
 
             <View style={styles.headerRight}>
                 {/* Chat Button */}
-                <TouchableOpacity onPress={() => {}} >
+                <TouchableOpacity onPress={() => navigation.navigate('Chat')} >
                     <Ionicons name='chatbubbles-outline' size={25} style={styles.iconStyle} />
                 </TouchableOpacity>
                 {/* User Profile Button */}
@@ -74,9 +75,9 @@ const styles = StyleSheet.create({
         marginLeft: 23,
     },
     headerBackground: {
+        marginTop: 10, 
         backgroundColor: 'white',
-        paddingVertical: 15, 
-        paddingHorizontal: 10, 
+        paddingVertical: 9, 
         flexDirection: 'row', 
         justifyContent: 'space-between',
     },
@@ -102,6 +103,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     headerRight: {
+        marginTop: 10, 
         flexDirection: 'row',
         alignItems: 'center',
         width: 100, 
