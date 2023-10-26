@@ -35,7 +35,7 @@ export const bottomTabIcons = [
             name="add-circle"
             size={70}
             color="#faca63"
-            style={{ marginVertical: -30 }}
+            style={{ flex: 1, marginVertical: -40 }}
             />
         ),
         inactive: (
@@ -43,7 +43,7 @@ export const bottomTabIcons = [
             name="add-circle"
             size={70}
             color="#faca63"
-            style={{ marginVertical: -30 }}
+            style={{ flex: 1, marginVertical: -40 }}
             />
         ),
     },
