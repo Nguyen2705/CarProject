@@ -6,20 +6,24 @@ import { useNavigation } from '@react-navigation/core';
 import { auth } from '../firebase';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Header from '../navigation/Header';
+import BottomTab, { bottomTabIcons } from '../navigation/BottomTab';
 
 
 // test case for profile
 const User = [
   {
     username: 'khoinguyen',
-    image: require('../assets/cyper_punk.jpg'), 
-  }
+    image: 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/PostImage%2Fcar.jpg?alt=media&token=7f8ea8e3-453d-4abf-9b29-5c9cf1b2dac9&_gl=1*16iee3m*_ga*OTc2OTg5NDQ4LjE2OTQxMDI5NDg.*_ga_CW55HF8NVT*MTY5ODI5NTQ5MC4yMC4xLjE2OTgyOTU1NjMuNDcuMC4w',
+  }, 
+  {
+    username: 'hungcao', 
+    image: 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/PostImage%2Fcyper_punk.jpg?alt=media&token=5b6b1f18-d20d-4bdf-a9cb-b1f35a75408e&_gl=1*1cnnixz*_ga*OTc2OTg5NDQ4LjE2OTQxMDI5NDg.*_ga_CW55HF8NVT*MTY5ODI5NTQ5MC4yMC4xLjE2OTgyOTU3MDUuNjAuMC4w' }
 ];
 
 const testPost = [
   {
     username: User[0].username, 
-    imageUrl: require('../assets/cyper_punk.jpg'), 
+    imageUrl: 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/PostImage%2Fcar.jpg?alt=media&token=7f8ea8e3-453d-4abf-9b29-5c9cf1b2dac9&_gl=1*16iee3m*_ga*OTc2OTg5NDQ4LjE2OTQxMDI5NDg.*_ga_CW55HF8NVT*MTY5ODI5NTQ5MC4yMC4xLjE2OTgyOTU1NjMuNDcuMC4w', 
     likes: 12431, 
     caption: 'Back to HomeTown', 
     profile_picture: User[0].image, 
@@ -40,11 +44,11 @@ const testPost = [
   },
 
   {
-    username: User[0].username, 
-    imageUrl: require('../assets/cyper_punk.jpg'), 
+    username: User[1].username, 
+    imageUrl: 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/PostImage%2Fcyper_punk.jpg?alt=media&token=5b6b1f18-d20d-4bdf-a9cb-b1f35a75408e&_gl=1*1cnnixz*_ga*OTc2OTg5NDQ4LjE2OTQxMDI5NDg.*_ga_CW55HF8NVT*MTY5ODI5NTQ5MC4yMC4xLjE2OTgyOTU3MDUuNjAuMC4w', 
     likes: 12431, 
     caption: 'Back to HomeTown', 
-    profile_picture: User[0].image, 
+    profile_picture: User[1].image, 
     comments: [
         {
             username: 'khoinguyen', 
@@ -120,6 +124,7 @@ const HomeScreen = () => {
             <Post post={post} key={index} />
           ))}
         </ScrollView>
+        <BottomTab icons={bottomTabIcons}/>
       </SafeAreaView>
       </GestureHandlerRootView>
 

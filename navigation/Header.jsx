@@ -28,8 +28,8 @@ const Header = () => {
     // Header Logo
         <>
             <View style={styles.headerBackground}> 
-                <TouchableOpacity onPress={() => {}}>
-                    <Image source={require('../assets/logo2.png')} style={styles.logoStyle} />
+                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                    <Image source={require('../assets/logo3.png')} style={styles.logoStyle} />
                 </TouchableOpacity>    
                     <Text style= {{ 
                         flexDirection: 'row', 
@@ -37,6 +37,7 @@ const Header = () => {
                         marginTop: 20, 
                         marginLeft: 10, 
                         fontWeight: 500, 
+                        color: '#333363', 
                         fontFamily: ''
                         }}>CARVO</Text>
             </View>    
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
         height: 30,
         width: 30,
         marginTop: 10,
-        marginLeft: 23,
+        marginLeft: -2,
     },
     headerBackground: {
         marginTop: 10, 
@@ -84,6 +85,7 @@ const styles = StyleSheet.create({
     iconStyle: {
         paddingHorizontal: 15,
         marginTop: 10,
+        color: '#333363', 
     }, 
     profileMenu: {
         position: 'absolute',

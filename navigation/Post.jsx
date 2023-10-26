@@ -62,13 +62,13 @@ const PostImage = ({ post }) => {
         <View 
             style={{
                 width: '100%', 
-                height: 450
+                height: 300
             }}
         >
             <Image 
                 // can be change to get the image from the user when they insert the image in the create post function
                 source={{uri: post.imageUrl}}
-                style={{ height: '100%', resizeMode: 'cover' }}
+                style={{ flex: 1, resizeMode: 'cover' }}
             />
         </View>
     ); 
@@ -92,7 +92,7 @@ const PostFooter = () => {
                 </TouchableOpacity>
                 {/* Send Post */}
                 <TouchableOpacity onPress={() => {}}>
-                <AntDesign name='enter' size={30} style={{width: 30, height: 30, color: '#333363', transform: 'rotate(180deg)'}} />
+                <AntDesign name='enter' size={30} style={{width: 30, height: 30, color: '#333363', transform: [{rotateY: '180deg'}]}} />
                 </TouchableOpacity>
             </View>
             
@@ -133,7 +133,7 @@ const CommentSection = ({ post }) => (
             <Text style={{ color: 'gray' }}>   
             {/* 1 comment => render component without 'all' and singular comment
                 2 comments => render component with 'all' and plural comment */}
-                View{post.comments.length > 1 ? 'all' : ''} {post.comments.length}{' '}
+                View{post.comments.length > 1 ? ' all' : ''} {post.comments.length}{' '}
                 {post.comments.length > 1 ? 'comments' : 'comment'}
             </Text>
         )}
