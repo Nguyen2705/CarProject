@@ -66,15 +66,15 @@ const ProfileScreen = () => {
             <View style={styles.photos}>
                 <Image
                     style={{...styles.photo, width: '32%', height: '70%'}}
-                    source={{ uri: 'https://utatickets.com/_img/venues/college-park-center.jpg' }}
+                    source={{ uri: 'https://hips.hearstapps.com/hmg-prod/images/07-chiron-dynamic-34-front-web-1499959186.jpg?crop=0.8888888888888888xw:1xh;center,top&resize=2048:*' }}
                 />
                 <Image
                     style={{...styles.photo, width: '32%', height: '70%'}}
-                    source={{ uri: 'https://pa-hrsuite-production.s3.amazonaws.com/2918/docs/457749.jpg' }}
+                    source={{ uri: 'https://assets.whichcar.com.au/image/upload/s--Ug5_-ZFW--/ar_2.304921968787515,c_fill,f_auto,q_auto:good/c_scale,w_2048/v1/archive/whichcar/2019/02/14/-1/2019-Mercedes-AMG-G63-performance-review.jpg' }}
                 />
                 <Image
                     style={{...styles.photo, width: '32%', height: '70%'}}
-                    source={{ uri: 'https://www.brwarch.com/wp-content/uploads/2019/11/UTA_hereford-02A.jpg' }}
+                    source={{ uri: 'https://www.topgear.com/sites/default/files/2021/09/309038_Honda_Civic_Type_R_Sportline.jpg?w=892&h=502' }}
                 />
             </View>
             <Modal
