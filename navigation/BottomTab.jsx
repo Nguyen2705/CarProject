@@ -35,7 +35,9 @@ export const bottomTabIcons = [
             name="add-circle"
             size={70}
             color="#faca63"
-            style={{ flex: 1, marginVertical: -40 }}
+            style={{ flex: 1, marginVertical: -40 }} // Adjust for the New Post Button
+            // marginVertical: -40,
+            //...(Platform.OS === 'android' ? { marginTop: -10 } : {}), // Adjust the marginTop for Android
             />
         ),
         inactive: (
