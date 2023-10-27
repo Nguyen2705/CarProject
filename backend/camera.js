@@ -5,13 +5,13 @@ import { Button, StyleSheet, Text, View } from 'react-native';
 
 
 
-export default function camera() {
+export default function CameraAccess() {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
   useEffect(() => {
     (async ()=> {
-      const { status } = await Camera.requestPermissionsAsync();
+      const { status } = await Camera.requestCameraPermissionsAsync();
       requestPermission(status === 'granted');
     })();
   })
@@ -58,6 +58,6 @@ const styles = StyleSheet.create({
   },
   fixedRatio: {
     flex: 1,
-    aspectRatio: 16 / 9
+    aspectRatio: 9/16
   }
 });

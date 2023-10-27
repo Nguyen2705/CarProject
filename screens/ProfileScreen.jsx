@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-na
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebase'; // Import the 'auth' object from your firebase.js file
-import Camera from '../backend/camera';
+import CameraAccess from '../backend/camera';
 
 const ProfileScreen = () => {
     const navigation = useNavigation();
