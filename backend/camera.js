@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   captureButton: {
-    backgroundColor: 'yellow',
+    backgroundColor: '#faca63',
     width: 70,
     height: 70,
     borderRadius: 35,
