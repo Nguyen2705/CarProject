@@ -8,6 +8,7 @@ import SignUpScreen from './screens/testSignup';
 import HomeScreen from './screens/HomeScreen';
 import ChatScreen from './screens/ChatScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import camera from './backend/camera';
 
 
 const Stack = createNativeStackNavigator();
@@ -22,6 +23,7 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false }} name="Home" component={HomeScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Chat" component={ChatScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Profile" component={ProfileScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="Camera" component={camera} />
       </Stack.Navigator>
     </NavigationContainer>
   );
