@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     },
     headerBackground: {
         marginTop: 10, 
-        
+        backgroundColor: 'white',
         paddingVertical: 0, 
         flexDirection: 'row', 
         justifyContent: 'space-between',
