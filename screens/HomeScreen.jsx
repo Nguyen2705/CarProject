@@ -60,20 +60,20 @@ const testPost = [
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const [menuVisible, setMenuVisible] = useState(false);
+  // const [menuVisible, setMenuVisible] = useState(false);
 
-  const handleSignOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        navigation.replace('Login');
-      })
-      .catch((error) => alert(error.message));
-  };
+  // const handleSignOut = () => {
+  //   auth
+  //     .signOut()
+  //     .then(() => {
+  //       navigation.replace('Login');
+  //     })
+  //     .catch((error) => alert(error.message));
+  // };
 
-  const toggleMenu = () => {
-    setMenuVisible(!menuVisible);
-  };
+  // const toggleMenu = () => {
+  //   setMenuVisible(!menuVisible);
+  // };
 
   return (
     <View style={styles.container}>
@@ -162,62 +162,62 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
-    justifyContent: 'space-between',
-  },
+  // header: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   padding: 10,
+  //   borderBottomWidth: 1,
+  //   borderBottomColor: '#E5E5E5',
+  //   justifyContent: 'space-between',
+  // },
   headerBackground: {
     backgroundColor: 'white',
-    paddingVertical: 15, 
+    paddingVertical: 10, 
     paddingHorizontal: 18, 
     flexDirection: 'row', 
     justifyContent: 'space-between',
   },
-  logo: {
-    width: 45,
-    height: 45,
-    marginTop: 45,
-    marginLeft: 45,
-  },
-  userProfileButton: {
-    alignItems: 'center',
-    padding: 5,
-    borderRadius: 10,
-    marginTop: 45,
-  },
-  logoStyle: {
-    height: 30,
-    width: 30,
-    marginTop: 10,
-    marginLeft: 23,
-  },
-  profileMenu: {
-    position: 'absolute',
-    top: 30,
-    right: 45,
-    backgroundColor: '#faca63',
-    borderRadius: 10,
-    padding: 1,
-  },
-  profileMenuItem: {
-    fontSize: 18,
-    color: '#333363',
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#333363',
-  },
+  // logo: {
+  //   width: 45,
+  //   height: 45,
+  //   marginTop: 45,
+  //   marginLeft: 45,
+  // },
+  // userProfileButton: {
+  //   alignItems: 'center',
+  //   padding: 5,
+  //   borderRadius: 10,
+  //   marginTop: 45,
+  // },
+  // logoStyle: {
+  //   height: 30,
+  //   width: 30,
+  //   marginTop: 10,
+  //   marginLeft: 23,
+  // },
+  // profileMenu: {
+  //   position: 'absolute',
+  //   top: 30,
+  //   right: 45,
+  //   backgroundColor: '#faca63',
+  //   borderRadius: 10,
+  //   padding: 1,
+  // },
+  // profileMenuItem: {
+  //   fontSize: 18,
+  //   color: '#333363',
+  //   paddingVertical: 6,
+  //   paddingHorizontal: 16,
+  //   borderBottomWidth: 0.5,
+  //   borderBottomColor: '#333363',
+  // },
 
-  signOutMenuItem: {
-    fontSize: 18,
-    color: '#333363',
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-  },
+  // signOutMenuItem: {
+  //   fontSize: 18,
+  //   color: '#333363',
+  //   paddingVertical: 6,
+  //   paddingHorizontal: 16,
+  // },
   
   headerRight: {
     flexDirection: 'row',

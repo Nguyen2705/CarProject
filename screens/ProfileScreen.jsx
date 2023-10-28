@@ -9,6 +9,7 @@ const ProfileScreen = () => {
     const navigation = useNavigation();
     const [user, setUser] = useState(null);
     const [isModalVisible, setModalVisible] = useState(false);
+    const [menuVisible, setMenuVisible] = useState(false);
 
     useEffect(() => {
         // Retrieve user information from Firebase Authentication
@@ -28,7 +29,22 @@ const ProfileScreen = () => {
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
-      };
+    };
+
+    // Menu slide for sign-out button and profile edit
+    const toggleMenu = () => {
+        setMenuVisible(!menuVisible);
+    };
+
+    // Handle sign out
+    const handleSignOut = () => {
+        auth
+          .signOut()
+          .then(() => {
+            navigation.replace('Login');
+          })
+          .catch((error) => alert(error.message));
+    };
 
 
     return (
@@ -37,6 +53,21 @@ const ProfileScreen = () => {
                 <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
                     <Ionicons name="chevron-back-outline" size={30} color="#333363" />
                 </TouchableOpacity>
+                
+                <TouchableOpacity onPress={toggleMenu}>
+                    <Ionicons name='settings-outline' size={26} style={styles.settings} />
+                </TouchableOpacity>
+                
+                {menuVisible && (
+                <View style={styles.settingsMenu}>                
+                    <TouchableOpacity onPress={() => navigation.navigate()}>                  
+                        <Text style={styles.settingsMenuItem}>Edit Profile</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleSignOut}>
+                        <Text style={styles.signOutMenuItem}>Sign Out</Text>
+                    </TouchableOpacity>
+                </View>
+                )}
                 {user && (
                     <>
                         <TouchableOpacity onPress={toggleModal}>
@@ -64,6 +95,10 @@ const ProfileScreen = () => {
                     <Text style={styles.statTitle}>Following</Text>
                 </View>
             </View>
+            
+            
+            
+
             <View style={styles.photos}>
                 <Image
                     style={{...styles.photo, width: '32%', height: '70%'}}
@@ -194,6 +229,37 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'red',
       },
+      settings: {
+        position: 'absolute',
+        color: '#333363',
+        top: 10, // Adjust the top value to position it as needed
+        left: 170, // Adjust the right value to position it as needed
+    },
+      settingsMenu: {
+        position: 'absolute',
+        top: 35,
+        right: 35,
+        backgroundColor: '#faca63',
+        borderRadius: 10,
+        padding: 10,
+        borderWidth: 0.5, // Add borderWidth for the border
+        borderColor: '#333363', // Set the border color
+    },
+    signOutMenuItem: {
+        fontSize: 15,
+        color: '#333363',
+        paddingVertical: 5,
+        paddingHorizontal: 0,
+      },
+    settingsMenuItem: {
+        fontSize: 15,
+        color: '#333363',
+        paddingVertical: 5,
+        paddingHorizontal: 0,
+        borderBottomWidth: 1,
+        borderBottomColor: '#333363',
+        padding: 10,
+    },
 });
 
 export default ProfileScreen;

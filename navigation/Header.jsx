@@ -7,22 +7,24 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Header = () => {
     const navigation = useNavigation(); 
-    const [menuVisible, setMenuVisible] = useState(false);
 
-    // Menu slide for sign-out button and profile edit
-    const toggleMenu = () => {
-        setMenuVisible(!menuVisible);
-    };
+    // const [menuVisible, setMenuVisible] = useState(false);
 
+    // // Menu slide for sign-out button and profile edit
+    // const toggleMenu = () => {
+    //     setMenuVisible(!menuVisible);
+    // };
+
+    
     // Handle sign out
-    const handleSignOut = () => {
-        auth
-          .signOut()
-          .then(() => {
-            navigation.replace('Login');
-          })
-          .catch((error) => alert(error.message));
-    };
+    // const handleSignOut = () => {
+    //     auth
+    //       .signOut()
+    //       .then(() => {
+    //         navigation.replace('Login');
+    //       })
+    //       .catch((error) => alert(error.message));
+    // };
 
     return (
     // Header Logo
@@ -34,7 +36,7 @@ const Header = () => {
                     <Text style= {{ 
                         flexDirection: 'row', 
                         justifyContent: 'space-between', 
-                        marginTop: 20, 
+                        marginTop: 50, 
                         marginLeft: 10, 
                         fontWeight: 500, 
                         color: '#333363', 
@@ -48,10 +50,10 @@ const Header = () => {
                     <Ionicons name='chatbubbles-outline' size={25} style={styles.iconStyle} />
                 </TouchableOpacity>
                 {/* User Profile Button */}
-                <TouchableOpacity onPress={toggleMenu}>
+                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                     <FontAwesome name='user-circle' size={24} style={styles.iconStyle} />
                 </TouchableOpacity>
-                {menuVisible && (
+                {/* {menuVisible && (
                 <View style={styles.profileMenu}>                
                     <TouchableOpacity onPress={() => navigation.navigate('Profile')}>                  
                         <Text style={styles.profileMenuItem}>Profile</Text>
@@ -60,7 +62,7 @@ const Header = () => {
                         <Text style={styles.profileMenuItem}>Sign Out</Text>
                     </TouchableOpacity>
                 </View>
-                )}
+                )} */}
             </View>
         </>
     );    
@@ -70,40 +72,40 @@ export default Header;
 
 const styles = StyleSheet.create({
     logoStyle: {
-        height: 30,
-        width: 30,
-        marginTop: 10,
+        height: 35,
+        width: 35,
+        marginTop: 40,
         marginLeft: -2,
     },
     headerBackground: {
         marginTop: 10, 
-        backgroundColor: 'white',
-        paddingVertical: 9, 
+        
+        paddingVertical: 0, 
         flexDirection: 'row', 
         justifyContent: 'space-between',
     },
     iconStyle: {
         paddingHorizontal: 15,
-        marginTop: 10,
+        marginTop: 40,
         color: '#333363', 
     }, 
-    profileMenu: {
-        position: 'absolute',
-        top: 30,
-        right: 45,
-        backgroundColor: '#faca63',
-        borderRadius: 10,
-        padding: 10,
-    },
-    profileMenuItem: {
-        fontSize: 18,
-        color: '#333363',
-        paddingVertical: 6,
-        paddingHorizontal: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#333363',
-        padding: 10,
-    },
+    // profileMenu: {
+    //     position: 'absolute',
+    //     top: 30,
+    //     right: 45,
+    //     backgroundColor: '#faca63',
+    //     borderRadius: 10,
+    //     padding: 10,
+    // },
+    // profileMenuItem: {
+    //     fontSize: 18,
+    //     color: '#333363',
+    //     paddingVertical: 6,
+    //     paddingHorizontal: 16,
+    //     borderBottomWidth: 1,
+    //     borderBottomColor: '#333363',
+    //     padding: 10,
+    // },
     headerRight: {
         marginTop: 10, 
         flexDirection: 'row',
