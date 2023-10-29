@@ -55,7 +55,7 @@ const ProfileScreen = () => {
                 </TouchableOpacity>
                 
                 <TouchableOpacity onPress={toggleMenu}>
-                    <Ionicons name='settings-outline' size={26} style={styles.settings} />
+                    <Ionicons name='settings-outline' size={26} style={styles.settingsButton} />
                 </TouchableOpacity>
                 
                 {menuVisible && (
@@ -119,10 +119,10 @@ const ProfileScreen = () => {
                     visible={isModalVisible}
                   >
                     <View style={styles.modalContainer}>
-                      <TouchableOpacity style={styles.modalOption} onPress={() => {}}>
+                      <TouchableOpacity style={styles.modalOption} onPress={() => { toggleModal(); navigation.navigate('Library');}}>
                         <Text style={styles.modalOptionText}>Choose From Library</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.modalOption} onPress={() => navigation.navigate('Camera')}>
+                      <TouchableOpacity style={styles.modalOption} onPress={() => { toggleModal();  navigation.navigate('Camera'); }}>
                         <Text style={styles.modalOptionText}>Take Photo</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.modalOption} onPress={toggleModal}>
@@ -229,13 +229,13 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'red',
       },
-      settings: {
+      settingsButton: {
         position: 'absolute',
         color: '#333363',
         top: 10, // Adjust the top value to position it as needed
-        left: 170, // Adjust the right value to position it as needed
+        left: '40%', // Adjust the right value to position it as needed
     },
-      settingsMenu: {
+    settingsMenu: {
         position: 'absolute',
         top: 35,
         right: 35,
@@ -249,7 +249,6 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: '#333363',
         paddingVertical: 5,
-        paddingHorizontal: 0,
       },
     settingsMenuItem: {
         fontSize: 15,
@@ -258,7 +257,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 0,
         borderBottomWidth: 1,
         borderBottomColor: '#333363',
-        padding: 10,
     },
 });
 
