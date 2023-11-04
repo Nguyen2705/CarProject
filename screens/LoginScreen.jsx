@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebase';
+import WelcomeScreen from './WelcomeScreen';
 
 
 const LoginScreen = () => {
@@ -23,7 +24,7 @@ const LoginScreen = () => {
   const KeyboardAvoidingBehavior = Platform.OS === 'ios' ? 'padding' : undefined;
 
   const handleGoBack = () => {
-        navigation.goBack();
+        navigation.navigate("Welcome");
     };
 
   useEffect(() => {
