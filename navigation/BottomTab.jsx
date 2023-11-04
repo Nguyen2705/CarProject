@@ -1,7 +1,6 @@
 import React, {useState} from 'react'; 
-import { View, Text } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Divider } from 'react-native-elements';
+import { View } from 'react-native';
+// import { Divider } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons'; 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';
@@ -49,42 +48,25 @@ export const bottomTabIcons = [
         inactive: <Ionicons name="ios-map-outline" size={25} color="#333363" />, 
     }
 ]
-const BottomTab = ({ icons, navigation }) => {
+const BottomTab = ({ icons }) => {
     const [activeTab, setActiveTab] = useState('New')
-    const navigation = useNavigation(); 
-
-    const handleTabPress = (name) => {
-        setActiveTab(name); 
-        // Navigate to the corresponding screen
-        navigation.navigate(name); 
-    }
 
     const Icon = ({ icon }) => (
-        <TouchableOpacity onPress={() => handleTabPress(icon.name)}>
+        <TouchableOpacity onPress={() => setActiveTab(icon.name)}>
           {activeTab === icon.name ? icon.active : icon.inactive}
         </TouchableOpacity>
     );
 
     return (
-        <View style={styles.wrapper} > 
-        <Divider width={1} orientation='vertical' />
-            <View style={styles.container}>
-                {icons.map((icon, index) => (
-                    <Icon key={index} icon={icon} />
-                ))}
-            </View>
+        <View style={styles.container}>
+            {icons.map((icon, index) => (
+                <Icon key={index} icon={icon} />
+            ))}
         </View>
     )
 }
 
 const styles = StyleSheet.create ({
-    wrapper: {
-        position: 'absolute',
-        width: '100%', 
-        bottom: '3%', 
-        zIndex: 999, 
-        backgroundColor: 'white'
-    }, 
     container: {
         flexDirection: 'row',
         justifyContent: 'space-around',
