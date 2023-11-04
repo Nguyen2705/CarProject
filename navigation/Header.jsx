@@ -27,6 +27,40 @@ const Header = () => {
     return (
     // Header Logo
         <>
+                {/* Header with Logo */}
+            {/* <View style={styles.header}>
+                <View style={{ flex: 1, alignItems: 'center' }}>
+                <Image source={require('../assets/logo2.png')} style={styles.logo} />
+                </View> */}
+                {/* New Message Button */}
+                {/* <View style={styles.headerRight}>
+                <TouchableOpacity onPress={toggleMenu} style={styles.userProfileButton}>
+                    <Ionicons name="person-circle-outline" size={35} color="#333363" />
+                </TouchableOpacity>
+                {menuVisible && (
+                    <View style={styles.profileMenu}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                        <Text style={styles.profileMenuItem}>Profile</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleSignOut}>
+                        <Text style={styles.signOutMenuItem}>Sign Out</Text>
+                    </TouchableOpacity>
+                    </View>
+                )}
+                </View>
+            </View> */}
+
+            {/* Chat Button */}
+            {/* <TouchableOpacity onPress={() => navigation.navigate('Chat')} style={styles.newMessageButton}>
+                <Ionicons name="chatbubbles-outline" size={30} color="#333363" />
+            </TouchableOpacity> */}
+
+            {/* Content */}
+            {/* <View style={styles.content}>
+                <Text style={styles.emailText}>Email: {auth.currentUser?.email}</Text>
+                {/* Add your car social media content here */}
+            {/* </View> */}
+            
             <View style={styles.headerBackground}> 
                 <TouchableOpacity onPress={() => navigation.navigate('Home')}>
                     <Image source={require('../assets/logo3.png')} style={styles.logoStyle} />
