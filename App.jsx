@@ -16,13 +16,16 @@ import LibraryScreen from './backend/library';
 import BottomTabNavigator from './BottomTabNavigator';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import HomeScreen from './screens/HomeScreen';
+import { SafeAreaView } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 // const Tab = createBottomTabNavigator(); 
 
 const Home = () => {
   return (
-    <BottomTabNavigator />
+    <SafeAreaView>
+      <BottomTabNavigator /> 
+    </SafeAreaView>
   );
 }
 
@@ -35,7 +38,7 @@ const App = () => {
           <Stack.Screen options={{ headerShown: false }} name="Welcome" component={WelcomeScreen} />
           <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
           <Stack.Screen options={{ headerShown: false }} name="SignUp" component={SignUpScreen} /> 
-          <Stack.Screen options={{ headerShown: false }} name="Home" component={HomeScreen} /> 
+          <Stack.Screen options={{ headerShown: false }} name="Home" component={BottomTabNavigator} /> 
           <Stack.Screen options={{ headerShown: false }} name="Chat" component={ChatScreen} />
           <Stack.Screen options={{ headerShown: false }} name="Profile" component={ProfileScreen} />
           <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
