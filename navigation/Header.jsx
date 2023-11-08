@@ -12,7 +12,7 @@ const Header = () => {
     // Header Logo
         <>
             <View style={styles.headerBackground}> 
-                <TouchableOpacity onPress={() => navigation.navigate('StackNavigatorName', {screen: 'Home'})}>
+                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
                     <Image source={require('../assets/logo3.png')} style={styles.logoStyle} />
                 </TouchableOpacity>    
                     <Text style= {{ 
@@ -60,9 +60,9 @@ const styles = StyleSheet.create({
         marginLeft: -2,
     },
     headerBackground: {
-        marginTop: 10, 
+        marginTop: 1, 
         backgroundColor: 'white',
-        paddingVertical: 0, 
+        // paddingVertical: , 
         flexDirection: 'row', 
         justifyContent: 'space-between',
     },

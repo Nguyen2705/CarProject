@@ -8,11 +8,11 @@ import BottomTab, { bottomTabIcons } from '../navigation/BottomTab';
 
 const HomeScreen = () => {
   return (
+    /* Header of HomeScreen */
     <View style={styles.container}>
       <View style={styles.headerBackground}> 
-          <Header />
-      </View>   
-
+        <Header />
+      </View>  
       {/* Display all post */}
       <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
@@ -22,7 +22,7 @@ const HomeScreen = () => {
             <Post post={post} key={index} />
           ))}
         </ScrollView>
-        <BottomTab icons={bottomTabIcons}/>
+        {/* <BottomTab icons={bottomTabIcons}/> */}
       </SafeAreaView>
       </GestureHandlerRootView>
     </View> 
