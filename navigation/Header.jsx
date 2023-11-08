@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
         marginLeft: -2,
     },
     headerBackground: {
-        marginTop: 1, 
+        marginTop: 15, 
         backgroundColor: 'white',
         // paddingVertical: , 
         flexDirection: 'row', 
