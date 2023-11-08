@@ -68,9 +68,9 @@ const BottomTabNavigator = () => {
     return (
         <Tab.Navigator
           initialRouteName='New'   //Initial Route to "New" after login successfully
-          tabBarOptions={{
-            style: styles.container, 
-          }}
+          screenOptions={{
+          tabBarStyle: styles.container,
+      }}
         >
           <Tab.Screen
             name="New"
@@ -144,6 +144,6 @@ const styles = StyleSheet.create ({
         flexDirection: 'column',
         justifyContent: 'space-around',
         alignItems: 'center',
-        height: 60,
+        height: Platform.OS == 'ios' ? 70 : 57,
     }, 
 })

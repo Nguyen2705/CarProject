@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
         marginLeft: -2,
     },
     headerBackground: {
-        marginTop: 15, 
+        marginTop: Platform.OS == 'ios' ? 15 : -40, 
         backgroundColor: 'white',
         // paddingVertical: , 
         flexDirection: 'row', 
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     //     padding: 10,
     // },
     headerRight: {
-        marginTop: 10, 
+        marginTop: Platform.OS == 'ios' ? 10 : -40, 
         flexDirection: 'row',
         alignItems: 'center',
         width: 100, 
