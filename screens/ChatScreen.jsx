@@ -96,14 +96,14 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 40,
+    paddingVertical: Platform.OS == 'ios' ? 40 : 20,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
     justifyContent: 'center',
     backgroundColor: '#333363', // Header background color
   },
   headerText: {
-    top: 20,
+    top: Platform.OS == 'ios' ? 20 : 5,
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white', // Header text color
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   goBackButton: {
     position: 'absolute',
-    top: 60,
+    top: Platform.OS == 'ios' ? 60 : 30 ,
     left: 15,
   },
 });

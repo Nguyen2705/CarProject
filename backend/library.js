@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    marginTop: 40,
+    marginTop: Platform.OS === 'ios' ? 55 : 0,
   },
   title: {
     fontSize: 24,
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     margin: 20,
     position: 'absolute',
-    bottom: -5, // Adjust this value as needed
+    bottom: Platform.OS === 'ios' ? 5 : -5, // Adjust this value as needed
     left: 0, // Adjust this value as needed
     right: 0, // Adjust this value as needed
   },
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     position: 'absolute',
-    top: 50, // Adjust this value as needed to position the button
+    top: 65, // Adjust this value as needed to position the button
     right: 10, // Adjust this value as needed to position the button
   },
   saveButtonText: {

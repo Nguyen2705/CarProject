@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     },
     header: {
         alignItems: 'center',
-        marginTop: 50,
+        marginTop: Platform.OS === 'ios' ? 53 : 5,
     },
     avatar: {
         marginTop: 10,

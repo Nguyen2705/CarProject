@@ -1,6 +1,6 @@
 import React, { useState} from 'react'; 
 import { auth } from '../firebase';
-import { View, Text, Image,StyleSheet, TouchableOpacity} from 'react-native';
+import { View, Text, Image,StyleSheet, TouchableOpacity, StatusBar} from 'react-native';
 import { useNavigation } from '@react-navigation/core'; 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -9,8 +9,11 @@ const Header = () => {
     const navigation = useNavigation(); 
 
     return (
-    // Header Logo
         <>
+        {/* Set the status bar background color */}
+            <StatusBar barStyle="dark-content" backgroundColor="white" />
+
+        {/* Header Logo */}
             <View style={styles.headerBackground}> 
                 <TouchableOpacity onPress={() => navigation.navigate('Home')}>
                     <Image source={require('../assets/logo3.png')} style={styles.logoStyle} />
@@ -22,7 +25,8 @@ const Header = () => {
                         marginLeft: 10, 
                         fontWeight: 500, 
                         color: '#333363', 
-                        fontFamily: ''
+                        fontFamily: '',
+                        fontWeight: 'bold',
                         }}>CARVO</Text>
             </View>    
 
@@ -60,7 +64,7 @@ const styles = StyleSheet.create({
         marginLeft: -2,
     },
     headerBackground: {
-        marginTop: 1, 
+        marginTop: Platform.OS == 'ios' ? 15 : -40, 
         backgroundColor: 'white',
         // paddingVertical: , 
         flexDirection: 'row', 
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
     //     padding: 10,
     // },
     headerRight: {
-        marginTop: 10, 
+        marginTop: Platform.OS == 'ios' ? 10 : -40, 
         flexDirection: 'row',
         alignItems: 'center',
         width: 100, 
