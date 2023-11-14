@@ -60,7 +60,7 @@ const ProfileScreen = () => {
                 
                 {menuVisible && (
                 <View style={styles.settingsMenu}>                
-                    <TouchableOpacity onPress={() => navigation.navigate()}>                  
+                    <TouchableOpacity onPress={() => navigation.navigate('Bio')}>                  
                         <Text style={styles.settingsMenuItem}>Edit Profile</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleSignOut}>

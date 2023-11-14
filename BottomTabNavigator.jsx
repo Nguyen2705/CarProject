@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 // Import your screen components
 import HomeScreen from './screens/HomeScreen'
@@ -51,20 +51,6 @@ const bottomTabIcons = {
   
 
 const BottomTabNavigator = () => {
-    // const [activeTab, setActiveTab] = useState('New')
-
-    // const Icon = React.memo(({ icon }) => {
-    //     const debouncedSetActiveTab = debounce((name) => {
-    //       setActiveTab((prevState) => (prevState === name ? null : name));
-    //     }, 300);
-      
-    //     return (
-    //       <TouchableOpacity onPress={() => debouncedSetActiveTab(icon.name)}>
-    //         {activeTab === icon.name ? icon.active : icon.inactive}
-    //       </TouchableOpacity>
-    //     );
-    // });
-      
     return (
         <Tab.Navigator
           initialRouteName='New'   //Initial Route to "New" after login successfully
