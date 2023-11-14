@@ -43,6 +43,7 @@ const App = () => {
           <Stack.Screen options={{ headerShown: false }} name="Profile" component={ProfileScreen} />
           <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
           <Stack.Screen options={{ headerShown: false }} name="Library" component={LibraryScreen} /> 
+          <Stack.Screen options={{ headerShown: false }} name="Bio" component={BioScreen} /> 
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>

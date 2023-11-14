@@ -3,7 +3,6 @@ import { StyleSheet, View, SafeAreaView } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import Post from '../navigation/Post';
 import Header from '../navigation/Header';
-import BottomTab, { bottomTabIcons } from '../navigation/BottomTab';
 
 
 const HomeScreen = () => {
