@@ -2,9 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as FileSystem from 'expo-file-system';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/storage';
 
 export default function LibraryScreen({ navigation }) {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isEditing, setIsEditing] = useState(false); // Add this state to track whether the image is being edited
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -28,12 +33,49 @@ export default function LibraryScreen({ navigation }) {
         quality: 1,
       });
 
-      if (!result.cancelled) {
+      if (!result.canceled) {
         setSelectedImage(result.uri);
+        setIsEditing(true); // Enable editing mode
       }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  // Add a function to handle saving the profile picture
+  const saveProfilePicture = async () => {
+    // Here, you can save the selectedImage as the profile picture
+    // and update your app's state or data accordingly.
+    // For example, you can send the image URI to your server for storage.
+    setIsEditing(false); // Disable editing mode after saving
+    setIsUploading(true);
+
+    try {
+      const{ uri } = await FileSystem.getInfoAsync(selectedImage);
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+          resolve(xhr.response);
+        };
+        xhr.onerror = (e) => {
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', uri, true);
+        xhr.send(null);
+      });
+
+      const filename = selectedImage.substring(selectedImage.lastIndexOf('/') + 1);
+      const ref = firebase.storage().ref().child('profileImage').child(filename);
+
+      await ref.put(blob);
+      setIsUploading(false);
+      setSelectedImage(null);
+
+    } catch (error) {
+      console.error(error);
+      setIsUploading(false);
+    };
   };
 
   return (
@@ -43,9 +85,17 @@ export default function LibraryScreen({ navigation }) {
           <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.title}>Library</Text>
+        {isEditing && ( // Show the "Save" button only when in editing mode
+            <TouchableOpacity style={styles.saveButton} onPress={saveProfilePicture}>
+              <Text style={styles.saveButtonText}>Save</Text>
+            </TouchableOpacity>
+          )}
       </View>
       {selectedImage ? (
-        <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
+        <>
+          
+          <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
+        </>
       ) : (
         <Text style={styles.noImageText}>No image selected</Text>
       )}
@@ -65,7 +115,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    marginTop: 40,
+    marginTop: Platform.OS === 'ios' ? 55 : 0,
   },
   title: {
     fontSize: 24,
@@ -73,10 +123,10 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   selectedImage: {
-    width: 200,
-    height: 200,
+    width: '95%',
+    height: '70%',
     alignSelf: 'center',
-    marginBottom: 20,
+    marginTop: 50,
   },
   noImageText: {
     fontSize: 16,
@@ -88,7 +138,23 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     margin: 20,
-    top: '76%',
+    position: 'absolute',
+    bottom: Platform.OS === 'ios' ? 5 : -5, // Adjust this value as needed
+    left: 0, // Adjust this value as needed
+    right: 0, // Adjust this value as needed
+  },
+  saveButton: {
+    padding: 10,
+    borderRadius: 5,
+    position: 'absolute',
+    top: 65, // Adjust this value as needed to position the button
+    right: 10, // Adjust this value as needed to position the button
+  },
+  saveButtonText: {
+    color: '#007AFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   selectButtonText: {
     color: 'white',

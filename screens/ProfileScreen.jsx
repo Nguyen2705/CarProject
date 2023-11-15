@@ -60,7 +60,7 @@ const ProfileScreen = () => {
                 
                 {menuVisible && (
                 <View style={styles.settingsMenu}>                
-                    <TouchableOpacity onPress={() => navigation.navigate()}>                  
+                    <TouchableOpacity onPress={() => navigation.navigate('Bio')}>                  
                         <Text style={styles.settingsMenuItem}>Edit Profile</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleSignOut}>
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     },
     header: {
         alignItems: 'center',
-        marginTop: 50,
+        marginTop: Platform.OS === 'ios' ? 53 : 5,
     },
     avatar: {
         marginTop: 10,

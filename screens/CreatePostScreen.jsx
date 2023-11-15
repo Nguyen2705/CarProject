@@ -1,10 +1,10 @@
 import React from 'react'; 
 import { View, Text, StyleSheet } from 'react-native'; 
 
-const SearchScreen = () => {
+const CreatePostScreen = () => {
     return (
         <View style={styles.container}>
-        <Text>Search Screen Content Goes Here</Text>
+        <Text>CreatePostScreen</Text>
         </View>
     );
 };
@@ -17,4 +17,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SearchScreen; 
+export default CreatePostScreen; 
