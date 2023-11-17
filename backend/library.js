@@ -5,11 +5,21 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as FileSystem from 'expo-file-system';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/storage';
+import { auth } from '../firebase';
 
 export default function LibraryScreen({ navigation }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isEditing, setIsEditing] = useState(false); // Add this state to track whether the image is being edited
   const [isUploading, setIsUploading] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const db = firebase.firestore();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -23,6 +33,8 @@ export default function LibraryScreen({ navigation }) {
       }
     })();
   }, []);
+
+  
 
   const pickImage = async () => {
     try {
@@ -49,6 +61,7 @@ export default function LibraryScreen({ navigation }) {
     // For example, you can send the image URI to your server for storage.
     setIsEditing(false); // Disable editing mode after saving
     setIsUploading(true);
+    let filename = null;
 
     try {
       const{ uri } = await FileSystem.getInfoAsync(selectedImage);
@@ -65,7 +78,7 @@ export default function LibraryScreen({ navigation }) {
         xhr.send(null);
       });
 
-      const filename = selectedImage.substring(selectedImage.lastIndexOf('/') + 1);
+      filename = selectedImage.substring(selectedImage.lastIndexOf('/') + 1);
       const ref = firebase.storage().ref().child('profileImage').child(filename);
 
       await ref.put(blob);
@@ -76,6 +89,20 @@ export default function LibraryScreen({ navigation }) {
       console.error(error);
       setIsUploading(false);
     };
+
+    const userRef = db.collection('users');
+    userRef
+      .doc(currentUser.uid)
+      .update({
+          image: filename,
+        
+      })
+      .then(() => {
+        console.log('Image updated successfully');
+      })
+      .catch((error) => {
+        console.error('Error updating image');
+      });
   };
 
   return (
