@@ -9,10 +9,10 @@ const SearchScreen = () => {
     const [year, setYear] = useState('');
 
     // Example data for the dropdowns
-    const models = [{ label: 'Model 1', value: 'model1' }, { label: 'Model 2', value: 'model2' }];
+    const models = [{ label: 'Camry', value: 'camry' },{ label: 'Corolla', value: 'corolla' },{ label: 'High Lander', value: 'highlander' }, { label: 'Tacoma', value: 'tacoma' }];
     const types = [{ label: 'Sedan', value: 'sedan' }, { label: 'SUV', value: 'suv' }];
-    const makes = [{ label: 'Make 1', value: 'make1' }, { label: 'Make 2', value: 'make2' }];
-    const years = [{ label: '2020', value: '2020' }, { label: '2021', value: '2021' }];
+    const makes = [{ label: 'Toyota', value: 'toyota' }, { label: 'Lexus', value: 'lexus' }];
+    const years = [{ label: '2020', value: '2020' }, { label: '2021', value: '2021' }, { label: '2022', value: '2022' }, { label: '2023', value: '2023' }];
 
     const handleSearch = () => {
         console.log(model, type, make, year);
