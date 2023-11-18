@@ -1,5 +1,4 @@
-import React, { useState} from 'react'; 
-import { auth } from '../firebase';
+import React from 'react'; 
 import { View, Text, Image,StyleSheet, TouchableOpacity, StatusBar} from 'react-native';
 import { useNavigation } from '@react-navigation/core'; 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -39,16 +38,6 @@ const Header = () => {
                 <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                     <FontAwesome name='user-circle' size={24} style={styles.iconStyle} />
                 </TouchableOpacity>
-                {/* {menuVisible && (
-                <View style={styles.profileMenu}>                
-                    <TouchableOpacity onPress={() => navigation.navigate('Profile')}>                  
-                        <Text style={styles.profileMenuItem}>Profile</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleSignOut}>
-                        <Text style={styles.profileMenuItem}>Sign Out</Text>
-                    </TouchableOpacity>
-                </View>
-                )} */}
             </View>
         </>
     );    
@@ -66,7 +55,6 @@ const styles = StyleSheet.create({
     headerBackground: {
         marginTop: Platform.OS == 'ios' ? 15 : -40, 
         backgroundColor: 'white',
-        // paddingVertical: , 
         flexDirection: 'row', 
         justifyContent: 'space-between',
     },
@@ -75,23 +63,6 @@ const styles = StyleSheet.create({
         marginTop: 40,
         color: '#333363', 
     }, 
-    // profileMenu: {
-    //     position: 'absolute',
-    //     top: 30,
-    //     right: 45,
-    //     backgroundColor: '#faca63',
-    //     borderRadius: 10,
-    //     padding: 10,
-    // },
-    // profileMenuItem: {
-    //     fontSize: 18,
-    //     color: '#333363',
-    //     paddingVertical: 6,
-    //     paddingHorizontal: 16,
-    //     borderBottomWidth: 1,
-    //     borderBottomColor: '#333363',
-    //     padding: 10,
-    // },
     headerRight: {
         marginTop: Platform.OS == 'ios' ? 10 : -40, 
         flexDirection: 'row',

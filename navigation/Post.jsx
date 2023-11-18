@@ -80,9 +80,6 @@ const PostFooter = () => {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <View style={styles.leftFooterIconsContainer}>
                 {/* Like Button */}
-                {/* <TouchableOpacity onPress={change}>
-                    {isActive ? (defaultIcon) : (changeIcon)}
-                </TouchableOpacity> */}
                 <TouchableOpacity onPress={() => {}}>
                 <FontAwesome name='star-o' size={30} style={styles.iconFooter}/>
                 </TouchableOpacity>
