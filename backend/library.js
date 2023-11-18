@@ -2,10 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as FileSystem from 'expo-file-system';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/storage';
+import { auth } from '../firebase';
 
 export default function LibraryScreen({ navigation }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isEditing, setIsEditing] = useState(false); // Add this state to track whether the image is being edited
+  const [isUploading, setIsUploading] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const db = firebase.firestore();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -20,6 +34,8 @@ export default function LibraryScreen({ navigation }) {
     })();
   }, []);
 
+  
+
   const pickImage = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -29,7 +45,7 @@ export default function LibraryScreen({ navigation }) {
         quality: 1,
       });
 
-      if (!result.cancelled) {
+      if (!result.canceled) {
         setSelectedImage(result.uri);
         setIsEditing(true); // Enable editing mode
       }
@@ -39,11 +55,54 @@ export default function LibraryScreen({ navigation }) {
   };
 
   // Add a function to handle saving the profile picture
-  const saveProfilePicture = () => {
+  const saveProfilePicture = async () => {
     // Here, you can save the selectedImage as the profile picture
     // and update your app's state or data accordingly.
     // For example, you can send the image URI to your server for storage.
     setIsEditing(false); // Disable editing mode after saving
+    setIsUploading(true);
+    let filename = null;
+
+    try {
+      const{ uri } = await FileSystem.getInfoAsync(selectedImage);
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+          resolve(xhr.response);
+        };
+        xhr.onerror = (e) => {
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', uri, true);
+        xhr.send(null);
+      });
+
+      filename = selectedImage.substring(selectedImage.lastIndexOf('/') + 1);
+      const ref = firebase.storage().ref().child('profileImage').child(filename);
+
+      await ref.put(blob);
+      setIsUploading(false);
+      setSelectedImage(null);
+
+    } catch (error) {
+      console.error(error);
+      setIsUploading(false);
+    };
+
+    const userRef = db.collection('users');
+    userRef
+      .doc(currentUser.uid)
+      .update({
+          image: filename,
+        
+      })
+      .then(() => {
+        console.log('Image updated successfully');
+      })
+      .catch((error) => {
+        console.error('Error updating image');
+      });
   };
 
   return (
@@ -53,14 +112,15 @@ export default function LibraryScreen({ navigation }) {
           <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.title}>Library</Text>
-      </View>
-      {selectedImage ? (
-        <>
-          {isEditing && ( // Show the "Save" button only when in editing mode
+        {isEditing && ( // Show the "Save" button only when in editing mode
             <TouchableOpacity style={styles.saveButton} onPress={saveProfilePicture}>
               <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
           )}
+      </View>
+      {selectedImage ? (
+        <>
+          
           <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
         </>
       ) : (
@@ -91,9 +151,9 @@ const styles = StyleSheet.create({
   },
   selectedImage: {
     width: '95%',
-    height: '78%',
+    height: '70%',
     alignSelf: 'center',
-    marginTop: 5,
+    marginTop: 50,
   },
   noImageText: {
     fontSize: 16,
