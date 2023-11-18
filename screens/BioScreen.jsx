@@ -1,8 +1,10 @@
 // Import statements
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { getFirestore, setDoc, doc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { Ionicons } from '@expo/vector-icons';
 import { getApps, initializeApp } from 'firebase/app';
 
 const firebaseConfig = {
@@ -24,6 +26,7 @@ const firestore = getFirestore();
 const auth = getAuth();
 
 const BioScreen = () => {
+    const navigation = useNavigation();
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
     const [userId, setUserId] = useState(null); // State to store the user ID
@@ -43,6 +46,10 @@ const BioScreen = () => {
         // Cleanup subscription on unmount
         return unsubscribe;
     }, []);
+
+    const handleGoBack = () => {
+        navigation.goBack();
+    };
 
     const handleSaveProfile = async () => {
         if (!userId) {
@@ -67,6 +74,9 @@ const BioScreen = () => {
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
+                <Ionicons name="chevron-back-outline" size={30} color="#333363" />
+            </TouchableOpacity>
             <Text style={styles.title}>Edit Profile</Text>
             <TextInput
                 style={styles.input}
@@ -105,6 +115,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'gray',
         borderRadius: 5,
+    },
+    goBackButton: {
+        position: 'absolute',
+        top: 65,
+        left: 10,
+        zIndex: 2,
     },
 });
 
