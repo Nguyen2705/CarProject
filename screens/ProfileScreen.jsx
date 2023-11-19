@@ -4,24 +4,61 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebase'; // Import the 'auth' object from your firebase.js file
 import CameraAccess from '../backend/camera';
+import {getStorage, ref, getDownloadURL} from "firebase/storage";
+import firebase from 'firebase/compat/app';
+import getImageURL from '../backend/fetchImage';
+
+
 
 const ProfileScreen = () => {
     const navigation = useNavigation();
-    const [user, setUser] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
     const [isModalVisible, setModalVisible] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [imageURL, setImageURL] = useState(null);
+    const db = firebase.firestore();
+    const storage = getStorage();
+    
 
     useEffect(() => {
-        // Retrieve user information from Firebase Authentication
-        const currentUser = auth.currentUser;
-        if (currentUser) {
-            setUser({
-                name: currentUser.displayName,
-                photoURL: currentUser.photoURL,
-                bio: 'Software Developer', // You can replace this with the user's bio if available
-            });
-        }
-    }, []);
+        const fetchData = async () => {
+          const unsubscribe = auth.onAuthStateChanged((user) => {
+            setCurrentUser(user);
+          });
+    
+          if (currentUser !== null) {
+            const userRef = db.collection('users').doc(currentUser.uid);
+    
+            try {
+              const doc = await userRef.get();
+              if (doc.exists) {
+                setFirstName(doc.get('firstName'));
+                setLastName(doc.get('lastName'));
+              }
+            } catch (error) {
+              console.error('Error fetching user data:', error);
+            }
+    
+            const storageRef = ref(storage, 'profileImage/' + currentUser.uid);
+    
+            try {
+              const url = await getDownloadURL(storageRef);
+              setImageURL(url);
+            } catch (error) {
+              console.error('Error fetching image URL:', error);
+            }
+          }
+    
+          return () => unsubscribe();
+        };
+    
+        fetchData();
+      }, [currentUser]);
+    
+    
+    console.log(imageURL);
 
     const handleGoBack = () => {
         navigation.goBack();
@@ -46,6 +83,8 @@ const ProfileScreen = () => {
           .catch((error) => alert(error.message));
     };
 
+    
+
 
     return (
         <View style={styles.container}>
@@ -68,16 +107,16 @@ const ProfileScreen = () => {
                     </TouchableOpacity>
                 </View>
                 )}
-                {user && (
+                {currentUser && (
                     <>
                         <TouchableOpacity onPress={toggleModal}>
                            <Image
                               style={styles.avatar}
-                              source={{ uri: user.photoURL }}
+                              source={{ uri: imageURL }}
                            />
                         </TouchableOpacity>
-                        <Text style={styles.name}>{user.name}</Text>
-                        <Text style={styles.bio}>{user.bio}</Text>
+                        <Text style={styles.name}>{`${firstName} ${lastName}`}</Text>
+                        <Text style={styles.bio}>{currentUser.bio}</Text>
                     </>
                 )}
             </View>
