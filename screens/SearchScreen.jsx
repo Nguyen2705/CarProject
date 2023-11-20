@@ -1,56 +1,135 @@
-import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 
 const SearchScreen = () => {
     const [model, setModel] = useState('');
-    const [type, setType] = useState('');
+    const [trim, setTrim] = useState('');
     const [make, setMake] = useState('');
     const [year, setYear] = useState('');
+    const [makes, setMakes] = useState([]);
+    const [years, setYears] = useState([]);
+    const [models, setModels] = useState([]);
+    const [trims, setTrims] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
-    // Example data for the dropdowns
-    const models = [{ label: 'Camry', value: 'camry' },{ label: 'Corolla', value: 'corolla' },{ label: 'High Lander', value: 'highlander' }, { label: 'Tacoma', value: 'tacoma' }];
-    const types = [{ label: 'Sedan', value: 'sedan' }, { label: 'SUV', value: 'suv' }];
-    const makes = [{ label: 'Toyota', value: 'toyota' }, { label: 'Lexus', value: 'lexus' }];
-    const years = [{ label: '2020', value: '2020' }, { label: '2021', value: '2021' }, { label: '2022', value: '2022' }, { label: '2023', value: '2023' }];
+    const commonHeaders = {
+        'X-RapidAPI-Key': '5d3ed09a33msh8bac4b622f400b3p19e1c1jsn2aba9231b546',
+        'X-RapidAPI-Host': 'car-api2.p.rapidapi.com'
+    };
+
+    const handleApiResponse = (result, setStateFunction, dataType) => {
+        if (result.message === "Too many requests") {
+            console.log("Rate limit reached. Please try again later.");
+            return;
+        }
+
+        const data = result.data || result;
+        const isYears = dataType === 'years';
+        const formattedData = data.map(item => ({
+            label: isYears ? item.toString() : item.name,
+            value: isYears ? item : item.id.toString()
+        }));
+
+        setStateFunction(formattedData);
+    };
+
+    const fetchCarYears = async () => {
+        const response = await fetch('https://car-api2.p.rapidapi.com/api/years', { method: 'GET', headers: commonHeaders });
+        const result = await response.json();
+        handleApiResponse(result, setYears, 'years');
+    };
+
+    const fetchCarMakes = async () => {
+        const response = await fetch('https://car-api2.p.rapidapi.com/api/makes?direction=asc&sort=id', { method: 'GET', headers: commonHeaders });
+        const result = await response.json();
+        handleApiResponse(result, setMakes, 'makes');
+    };
+
+    const fetchCarModels = async () => {
+        const response = await fetch(`https://car-api2.p.rapidapi.com/api/models?sort=id&direction=asc&year=${year}&verbose=yes`, { method: 'GET', headers: commonHeaders });
+        const result = await response.json();
+        handleApiResponse(result, setModels, 'models');
+    };
+
+    const fetchCarTrims = async () => {
+        const response = await fetch(`https://car-api2.p.rapidapi.com/api/trims?direction=asc&sort=id&year=${year}&verbose=yes`, { method: 'GET', headers: commonHeaders });
+        const result = await response.json();
+        handleApiResponse(result, setTrims, 'trims');
+    };
+
+    useEffect(() => {
+        fetchCarYears();
+    }, []);
+
+    useEffect(() => {
+        if (year) {
+            fetchCarMakes();
+        } else {
+            setMakes([]);
+            setMake('');
+        }
+    }, [year]);
+
+    useEffect(() => {
+        if (make) {
+            fetchCarModels();
+        } else {
+            setModels([]);
+            setModel('');
+        }
+    }, [make]);
+
+    useEffect(() => {
+        if (model) {
+            fetchCarTrims();
+        } else {
+            setTrims([]);
+            setTrim('');
+        }
+    }, [model]);
 
     const handleSearch = () => {
-        console.log(model, type, make, year);
+        console.log(year, make, model, trim);
     };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Car Search</Text>
-
-            <RNPickerSelect
-                onValueChange={(value) => setModel(value)}
-                items={models}
-                placeholder={{ label: 'Select a model', value: null }}
-                style={pickerSelectStyles}
-            />
-
-            <RNPickerSelect
-                onValueChange={(value) => setType(value)}
-                items={types}
-                placeholder={{ label: 'Select a type', value: null }}
-                style={pickerSelectStyles}
-            />
-
-            <RNPickerSelect
-                onValueChange={(value) => setMake(value)}
-                items={makes}
-                placeholder={{ label: 'Select a make', value: null }}
-                style={pickerSelectStyles}
-            />
-
-            <RNPickerSelect
-                onValueChange={(value) => setYear(value)}
-                items={years}
-                placeholder={{ label: 'Select a year', value: null }}
-                style={pickerSelectStyles}
-            />
-
-            <Button title="Search" onPress={handleSearch} />
+            {isLoading ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+            ) : (
+                <>
+                    <RNPickerSelect
+                        onValueChange={(value) => setYear(value)}
+                        items={years}
+                        placeholder={{ label: 'Select a year', value: null }}
+                        style={pickerSelectStyles}
+                    />
+                    <RNPickerSelect
+                        onValueChange={(value) => setMake(value)}
+                        items={makes}
+                        placeholder={{ label: 'Select a make', value: null }}
+                        style={pickerSelectStyles}
+                        disabled={!year}
+                    />
+                    <RNPickerSelect
+                        onValueChange={(value) => setModel(value)}
+                        items={models}
+                        placeholder={{ label: 'Select a model', value: null }}
+                        style={pickerSelectStyles}
+                        disabled={!make}
+                    />
+                    <RNPickerSelect
+                        onValueChange={(value) => setTrim(value)}
+                        items={trims}
+                        placeholder={{ label: 'Select a trim', value: null }}
+                        style={pickerSelectStyles}
+                        disabled={!model}
+                    />
+                    <Button title="Search" onPress={handleSearch} />
+                </>
+            )}
         </ScrollView>
     );
 };
