@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StatusBar, StyleSheet, Text, Image, TouchableOpacity, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import axios from 'axios';
 
@@ -118,6 +118,13 @@ const App = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('../assets/logo5.png')}
+          style={styles.logo}
+        />
+        <Text style={styles.logoText}>CARVO</Text>
+      </View>
       <StatusBar barStyle="light-content" />
       <View style={styles.dropdownContainer}>
         <Dropdown
@@ -203,15 +210,30 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#333363',
+    backgroundColor: '#EDEDED',
     padding: 16,
     justifyContent: 'center',
     alignContent: 'center',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  logo: {
+    width: 130,
+    height: 100,
+  },
+  logoText: {
+    fontSize: 24,
+    color: 'black',
+    fontWeight: 'bold',
+    marginTop: 10,
   },
   dropdownContainer: {
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 15,
+    marginBottom: 20,
   },
   dropdown: {
     height: 50,
