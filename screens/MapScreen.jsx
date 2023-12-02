@@ -118,7 +118,8 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: 'row',
-    padding: Platform.OS === 'ios' ? 40 : 10,
+    paddingHorizontal: Platform.OS === 'ios' ? 25 : 20,
+    paddingVertical: Platform.OS === 'ios' ? 40 : 10,
     top: Platform.OS === 'ios' ? 0 : 0,
     backgroundColor: 'white',
     
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginRight: 10,
-    top: 25,
+    top: Platform.OS === 'ios' ? 25 : 0,
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
@@ -135,9 +136,8 @@ const styles = StyleSheet.create({
   searchButton: {
     backgroundColor: '#faca63',
     borderRadius: 15,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    top: 25,
+    padding: 10,
+    top: Platform.OS === 'ios' ? 25 : 0,
   },
   searchButtonText: {
     color: '#333363',

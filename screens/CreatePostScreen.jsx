@@ -137,7 +137,9 @@ const CreatePostScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <Button title="Post" onPress={handlePost} />
+      <TouchableOpacity style={styles.postButton}>
+          <Text style={styles.postButtonText}>Share</Text>
+        </TouchableOpacity>
     </View>
   );
 };
@@ -155,6 +157,7 @@ const styles = StyleSheet.create({
   headerBackground: {
     flexDirection: 'row',
     alignItems: 'center',
+    bottom: Platform.OS == 'ios' ? 5 : 30,
     paddingVertical: Platform.OS == 'ios' ? 40 : 20,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
@@ -195,6 +198,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     padding: 8,
     width: '100%',
+  },
+  postButton: {
+    backgroundColor: '#faca63',
+    padding: 10,
+    borderRadius: 15,
+    alignItems: 'center',
+  },
+  postButtonText: {
+    color: '#333363',
+    fontWeight: 'bold',
   },
 });
 
