@@ -13,6 +13,7 @@ export default function LibraryScreen({ navigation }) {
   const [isUploading, setIsUploading] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const db = firebase.firestore();
+  
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -61,7 +62,20 @@ export default function LibraryScreen({ navigation }) {
     // For example, you can send the image URI to your server for storage.
     setIsEditing(false); // Disable editing mode after saving
     setIsUploading(true);
-    let filename = null;
+    let filename = currentUser.uid;
+    
+    //Check whether or not filename is exist in profileImage folder
+    //If yes, delete current filename to later store new filename
+    const existingRef = firebase.storage().ref().child('profileImage').child(filename);
+    try {
+      await existingRef.getDownloadURL();
+  
+      // If the file exists, delete it
+      await existingRef.delete();
+      console.log('Existing file deleted.');
+    } catch (error) {
+      // Ignore errors if the file doesn't exist
+    }
 
     try {
       const{ uri } = await FileSystem.getInfoAsync(selectedImage);
@@ -78,7 +92,6 @@ export default function LibraryScreen({ navigation }) {
         xhr.send(null);
       });
 
-      filename = selectedImage.substring(selectedImage.lastIndexOf('/') + 1);
       const ref = firebase.storage().ref().child('profileImage').child(filename);
 
       await ref.put(blob);

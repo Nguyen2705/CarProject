@@ -57,3 +57,24 @@ To run the project, please follow these steps:
    # If you want to run it on iOS or Android, use a phone to scan the QR code or use a simulator
    ```
 7. Choose your platform and experience the app.
+
+
+## Welcome Page
+
+![Alt text](./assets/carvo.png)
+
+## Login Page
+
+![Alt text](./assets/carvo2.png)
+
+## Home Page
+
+![Alt text](./assets/carvo3.png)
+
+## Map Page
+
+![Alt text](./assets/carvo4.png)
+
+## Chat Room
+
+![Alt text](./assets/carvo5.png)
