@@ -33,7 +33,7 @@ const App = () => {
   return (
     <>
       {/* Set the status bar background color */}
-      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+      <StatusBar barStyle="dark-content" backgroundColor="white" />
     <GestureHandlerRootView style={{ flex: 1}}>
       <NavigationContainer>
         <Stack.Navigator>

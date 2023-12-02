@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   },
   goBackButton: {
     position: 'absolute',
-    top: 60,
+    top: Platform.OS == 'ios' ? 60 : 10,
     left: 15,
   },
 });
