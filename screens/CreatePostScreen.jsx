@@ -1,90 +1,190 @@
-// import React, {useState, useEffect} from 'react'; 
-// import { View, Text, StyleSheet } from 'react-native'; 
-// import { auth, firestore, storage } from '../firebase';
+import React, { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, Image, TextInput, Button, Alert, TouchableOpacity } from 'react-native';
+import { auth, firestore, storage } from '../firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import { FontAwesome, Feather } from '@expo/vector-icons';
+import ImagePicker from 'react-native-image-crop-picker';
 
-// const CreatePostScreen = () => {
-//     const [ caption, setCaption ] = useState(''); 
-//     const [ image, setImage ] = useState(null); 
-//     const [ user, setUser ] = useState(null); 
+const CreatePostScreen = () => {
+  const [caption, setCaption] = useState('');
+  const [image, setImage] = useState(null);
+  const [user, setUser] = useState(null);
+  const navigation = useNavigation();
+  const db = firebase.firestore();
 
-//     useEffect(() => {
-//         const unsubscribe = auth.onAuthStateChanged((user) => {
-//             if (user) 
-//             {
-//                 // if user successfully signed in
-//                 setUser(user); 
-//             }
-//             else
-//             {
-//                 // No user sign in
-//                 setUser(null); 
-//             }
-//         }); 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
 
-//         return () => unsubscribe(); 
-//     }); 
+    return () => unsubscribe();
+  }, []);
 
-//     const getUser = async (uid) => {
-//         try {
-//             const userDoc = await firestore.collection('users').doc(uid).get(); 
-//             if (userDoc.exist) 
-//             {
-//                 const userData = userDoc.data; 
-//                 return userData
-//             }
-//         } 
-//         catch (error)
-//         {
-//             console.error('Error fetching the data: ', error.message); 
-//         }
-//     }; 
+  const handleChooseFromLibrary = async () => {
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 300,
+        height: 400,
+        cropping: true,
+      });
+  
+      if (image.path) {
+        setImage(image.path);
+      }
+    } catch (error) {
+      console.error('Error choosing from library:', error.message);
+    }
+  };
+  
+  const handleTakePhoto = async () => {
+    try {
+      const image = await ImagePicker.openCamera({
+        width: 300,
+        height: 400,
+        cropping: true,
+      });
+  
+      if (image.path) {
+        setImage(image.path);
+      }
+    } catch (error) {
+      console.error('Error taking photo:', error.message);
+    }
+  };
 
-//     return (
-//         <View style={styles.container}>
-//             {user && (
-//                 <CreatePostHeader 
-//                 username={user.firstName} 
-//                 // profileImage={image.profileImage} 
-//                 />
-//             )}
-//         </View>
-//     );
-// };
+  const handlePost = async () => {
+    try {
+      const currentUser = auth.currentUser;
 
-// const CreatePostHeader = ({ username, profileImage }) => {
-//     return (
-//         <View style = {styles.header}> 
-//             {postImage && <Image source={{ uri: profileImage }} style={styles.profileImage} /> }
-//             <Text style={styles.username}>username</Text>
-//         </View>
-//     ); 
-// }; 
- 
-// const styles = StyleSheet.create({
-//     container: {
-//       flex: 1,
-//       justifyContent: 'center',
-//       alignItems: 'center',
-//     },
-//     header: {
-//         flexDirection: 'row', 
-//         justifyContent: 'space-between',
-//         margin: 5, 
-//         alignItems: 'center', 
-//     }, 
-//     profileImage: {
-//         width: 35, 
-//         height: 35, 
-//         borderRadius: 50, 
-//         marginLeft: 6, 
-//         borderWidth: 1.6, 
-//         borderColor: '#ff8501', 
-//     }, 
-//     username: {
-//         color: '#333363', 
-//         marginLeft: 5, 
-//         fontWeight: '700', 
-//     }
-// });
+      if (!currentUser) {
+        throw new Error('User not signed in');
+      }
 
-// export default CreatePostScreen; 
+    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+
+    const postRef = await db.collection('posts').add({
+      image: image,
+      caption: caption,
+      timestamp: timestamp,
+      userId: user.uid,
+      userName: user.displayName,
+      userImage: user.photoURL,
+    });
+
+    console.log('Post created with ID:', postRef.id);
+
+    setCaption('');
+    Alert.alert('Success', 'Post created successfully!');
+    } catch (error) {
+    console.error('Error creating post:', error.message);
+    Alert.alert('Error', 'Failed to create post. Please try again.');
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.headerBackground}>
+        <Text 
+            style={{
+                top: Platform.OS == 'ios' ? 20 : 5,
+                fontSize: 18,
+                fontWeight: 'bold',
+                color: '#333363', // Header text color
+        }}>Create Post</Text>
+      </View>
+
+      {user && (
+        <View style={styles.header}>
+          {user.photoURL ? (
+            <Image source={{ uri: user.photoURL }} style={styles.profileImage} />
+          ) : (
+            <DefaultProfileImage />
+          )}
+          <Text style={styles.username}>{user.displayName}</Text>
+        </View>
+      )}
+
+      <TextInput
+        style={styles.input}
+        placeholder="Write a caption..."
+        value={caption}
+        onChangeText={(text) => setCaption(text)}
+      />
+
+      <View style={styles.footer}>
+        <TouchableOpacity onPress={handleChooseFromLibrary}>
+          <FontAwesome name="photo" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleTakePhoto}>
+          <Feather name="camera" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
+
+      <Button title="Post" onPress={handlePost} />
+    </View>
+  );
+};
+
+const DefaultProfileImage = () => {
+  return <Image source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/PostImage%2Fcyber_punk.jpg?alt=media&token=5b6b1f18-d20d-4bdf-a9cb-b1f35a75408e' }} style={styles.profileImage} />;
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 15, 
+  },
+  headerBackground: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Platform.OS == 'ios' ? 40 : 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E5E5',
+    justifyContent: 'center',
+    backgroundColor: 'white', // Header background color
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 20,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '20%',
+    marginBottom: 16,
+  },
+  profileImage: {
+    top: 20,
+    width: 35,
+    height: 35,
+    borderRadius: 50,
+    marginLeft: 6,
+    borderWidth: 1.6,
+    borderColor: '#ff8501',
+  },
+  username: {
+    color: '#333363',
+    marginLeft: 5,
+    fontWeight: '700',
+    top: 30,
+  },
+  input: {
+    top: 10,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 16,
+    padding: 8,
+    width: '100%',
+  },
+});
+
+export default CreatePostScreen;
