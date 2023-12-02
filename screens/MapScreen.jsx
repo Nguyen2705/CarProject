@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { StyleSheet, View, TextInput, Button, Modal, Text } from 'react-native';
+import { StyleSheet, View, TextInput, Button, Modal, Text, TouchableOpacity } from 'react-native';
 
 const MapScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -58,7 +58,9 @@ const MapScreen = () => {
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
-        <Button title="Search" onPress={handleSearch} />
+        <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+          <Text style={styles.searchButtonText}>Search</Text>
+        </TouchableOpacity>
       </View>
 
       <MapView
@@ -117,17 +119,30 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     padding: Platform.OS === 'ios' ? 40 : 10,
-    top: Platform.OS === 'ios' ? 30 : 0,
+    top: Platform.OS === 'ios' ? 0 : 0,
     backgroundColor: 'white',
     
   },
   input: {
     flex: 1,
     marginRight: 10,
+    top: 25,
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 10,
+  },
+  searchButton: {
+    backgroundColor: '#faca63',
+    borderRadius: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    top: 25,
+  },
+  searchButtonText: {
+    color: '#333363',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   modalContainer: {
     flex: 1,
