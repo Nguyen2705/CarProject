@@ -1,176 +1,245 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
+import React, { useEffect, useState } from 'react';
+import { Alert, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
+import axios from 'axios';
 
-const SearchScreen = () => {
-    const [model, setModel] = useState('');
-    const [trim, setTrim] = useState('');
-    const [make, setMake] = useState('');
-    const [year, setYear] = useState('');
-    const [makes, setMakes] = useState([]);
-    const [years, setYears] = useState([]);
-    const [models, setModels] = useState([]);
-    const [trims, setTrims] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+const App = () => {
+  const [yearsData, setYearsData] = useState([]);
+  const [makesData, setMakesData] = useState([]);
+  const [modelsData, setModelsData] = useState([]);
+  const [trimsData, setTrimsData] = useState([]);
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [selectedMake, setSelectedMake] = useState(null);
+  const [selectedModel, setSelectedModel] = useState(null);
+  const [selectedTrim, setSelectedTrim] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
 
-    const commonHeaders = {
-        'X-RapidAPI-Key': '5d3ed09a33msh8bac4b622f400b3p19e1c1jsn2aba9231b546',
-        'X-RapidAPI-Host': 'car-api2.p.rapidapi.com'
-    };
+  useEffect(() => {
+    fetchYears();
+  }, []);
 
-    const handleApiResponse = (result, setStateFunction, dataType) => {
-        if (result.message === "Too many requests") {
-            console.log("Rate limit reached. Please try again later.");
-            return;
-        }
+  const fetchYears = async () => {
+    try {
+      const response = await axios.get('https://car-api2.p.rapidapi.com/api/years', {
+        headers: {
+          'X-RapidAPI-Key': '5d3ed09a33msh8bac4b622f400b3p19e1c1jsn2aba9231b546',
+          'X-RapidAPI-Host': 'car-api2.p.rapidapi.com',
+        },
+      });
+      if (response.data && Array.isArray(response.data)) {
+        setYearsData(response.data.map(year => ({ value: year, label: year.toString() })));
+      } else {
+        console.error('Years data is not in the expected format');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-        const data = result.data || result;
-        const isYears = dataType === 'years';
-        const formattedData = data.map(item => ({
-            label: isYears ? item.toString() : item.name,
-            value: isYears ? item : item.id.toString()
-        }));
+  const handleYearChange = (item) => {
+    setSelectedYear(item.value);
+    fetchMakes(item.value);
+  };
 
-        setStateFunction(formattedData);
-    };
+  const fetchMakes = async (year) => {
+    try {
+      const response = await axios.get('https://car-api2.p.rapidapi.com/api/makes', {
+        params: { direction: 'asc', sort: 'id', year: year },
+        headers: {
+          'X-RapidAPI-Key': '5d3ed09a33msh8bac4b622f400b3p19e1c1jsn2aba9231b546',
+          'X-RapidAPI-Host': 'car-api2.p.rapidapi.com',
+        },
+      });
 
-    const fetchCarYears = async () => {
-        const response = await fetch('https://car-api2.p.rapidapi.com/api/years', { method: 'GET', headers: commonHeaders });
-        const result = await response.json();
-        handleApiResponse(result, setYears, 'years');
-    };
+      if (response.data && response.data.collection && Array.isArray(response.data.collection.data)) {
+        // Assuming makes data is nested inside response.data.collection.data
+        setMakesData(response.data.collection.data.map(make => ({ value: make.name, label: make.name })));
+      } else {
+        console.error("Makes data is not in the expected format");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    const fetchCarMakes = async () => {
-        const response = await fetch('https://car-api2.p.rapidapi.com/api/makes?direction=asc&sort=id', { method: 'GET', headers: commonHeaders });
-        const result = await response.json();
-        handleApiResponse(result, setMakes, 'makes');
-    };
+  const handleMakeChange = (item) => {
+    setSelectedMake(item.value);
+    fetchModels(selectedYear, item.value);
+  };
 
-    const fetchCarModels = async () => {
-        const response = await fetch(`https://car-api2.p.rapidapi.com/api/models?sort=id&direction=asc&year=${year}&verbose=yes`, { method: 'GET', headers: commonHeaders });
-        const result = await response.json();
-        handleApiResponse(result, setModels, 'models');
-    };
+  const fetchModels = async (year, make) => {
+    try {
+      const response = await axios.request({
+        method: 'GET',
+        url: 'https://car-api2.p.rapidapi.com/api/models',
+        params: { sort: 'id', direction: 'asc', year: year, make: make, verbose: 'yes' },
+        headers: {
+          'X-RapidAPI-Key': '5d3ed09a33msh8bac4b622f400b3p19e1c1jsn2aba9231b546',
+          'X-RapidAPI-Host': 'car-api2.p.rapidapi.com'
+        },
+      });
+      if (response.data && Array.isArray(response.data.products)) {
+        // Assuming models data is nested inside response.data.products
+        setModelsData(response.data.products.map(model => ({ value: model, label: model })));
+      } else {
+        console.error("Models data is not in the expected format");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    const fetchCarTrims = async () => {
-        const response = await fetch(`https://car-api2.p.rapidapi.com/api/trims?direction=asc&sort=id&year=${year}&verbose=yes`, { method: 'GET', headers: commonHeaders });
-        const result = await response.json();
-        handleApiResponse(result, setTrims, 'trims');
-    };
+  const handleModelChange = (item) => {
+    setSelectedModel(item.value);
+    fetchTrims(selectedYear, selectedMake, item.value);
+  };
 
-    useEffect(() => {
-        fetchCarYears();
-    }, []);
+  const fetchTrims = async (year, make, model) => {
+    try {
+      const response = await axios.request({
+        method: 'GET',
+        url: 'https://car-api2.p.rapidapi.com/api/trims',
+        params: { direction: 'asc', sort: 'id', year: year, make: make, model: model, verbose: 'yes' },
+        headers: {
+          'X-RapidAPI-Key': '5d3ed09a33msh8bac4b622f400b3p19e1c1jsn2aba9231b546',
+          'X-RapidAPI-Host': 'car-api2.p.rapidapi.com'
+        },
+      });
+      if (response.data && Array.isArray(response.data.products)) {
+        // Assuming trims data is nested inside response.data.products
+        setTrimsData(response.data.products.map(trim => ({ value: trim, label: trim })));
+      } else {
+        console.error("Trims data is not in the expected format");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    useEffect(() => {
-        if (year) {
-            fetchCarMakes();
-        } else {
-            setMakes([]);
-            setMake('');
-        }
-    }, [year]);
-
-    useEffect(() => {
-        if (make) {
-            fetchCarModels();
-        } else {
-            setModels([]);
-            setModel('');
-        }
-    }, [make]);
-
-    useEffect(() => {
-        if (model) {
-            fetchCarTrims();
-        } else {
-            setTrims([]);
-            setTrim('');
-        }
-    }, [model]);
-
-    const handleSearch = () => {
-        console.log(year, make, model, trim);
-    };
-
-    return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Car Search</Text>
-            {isLoading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
-            ) : (
-                <>
-                    <RNPickerSelect
-                        onValueChange={(value) => setYear(value)}
-                        items={years}
-                        placeholder={{ label: 'Select a year', value: null }}
-                        style={pickerSelectStyles}
-                    />
-                    <RNPickerSelect
-                        onValueChange={(value) => setMake(value)}
-                        items={makes}
-                        placeholder={{ label: 'Select a make', value: null }}
-                        style={pickerSelectStyles}
-                        disabled={!year}
-                    />
-                    <RNPickerSelect
-                        onValueChange={(value) => setModel(value)}
-                        items={models}
-                        placeholder={{ label: 'Select a model', value: null }}
-                        style={pickerSelectStyles}
-                        disabled={!make}
-                    />
-                    <RNPickerSelect
-                        onValueChange={(value) => setTrim(value)}
-                        items={trims}
-                        placeholder={{ label: 'Select a trim', value: null }}
-                        style={pickerSelectStyles}
-                        disabled={!model}
-                    />
-                    <Button title="Search" onPress={handleSearch} />
-                </>
-            )}
-        </ScrollView>
-    );
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      <View style={styles.dropdownContainer}>
+        <Dropdown
+          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          iconStyle={styles.iconStyle}
+          data={yearsData}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select Year' : '...'}
+          searchPlaceholder="Search..."
+          value={selectedYear}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={handleYearChange}
+        />
+        <Dropdown
+          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          iconStyle={styles.iconStyle}
+          data={makesData}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select Make' : '...'}
+          searchPlaceholder="Search..."
+          value={selectedMake}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={handleMakeChange}
+        />
+        <Dropdown
+          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          iconStyle={styles.iconStyle}
+          data={modelsData}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select Model' : '...'}
+          searchPlaceholder="Search..."
+          value={selectedModel}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={handleModelChange}
+        />
+        <Dropdown
+          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          iconStyle={styles.iconStyle}
+          data={trimsData}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus ? 'Select Trim' : '...'}
+          searchPlaceholder="Search..."
+          value={selectedTrim}
+          onFocus={() => setIsFocus(true)}
+          onBlur={() => setIsFocus(false)}
+          onChange={(item) => setSelectedTrim(item.value)}
+        />
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={() =>
+            Alert.alert(
+              `You have selected\nYear: ${selectedYear}\nMake: ${selectedMake}\nModel: ${selectedModel}\nTrim: ${selectedTrim}`,
+            )
+          }>
+          <Text style={styles.submitButtonText}>Search</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 };
 
+export default App;
+
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#333363',
+    padding: 16,
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
+  dropdownContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 15,
+  },
+  dropdown: {
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    marginBottom: 10,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  submitButton: {
+    backgroundColor: '#faca63',
+    padding: 20,
+    borderRadius: 15,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: '#333363',
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+  },
 });
-
-const pickerSelectStyles = StyleSheet.create({
-    inputIOS: {
-        fontSize: 16,
-        paddingVertical: 12,
-        paddingHorizontal: 10,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 4,
-        color: 'black',
-        paddingRight: 30, // to ensure the text is never behind the icon
-        marginBottom: 10,
-    },
-    inputAndroid: {
-        fontSize: 16,
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-        borderWidth: 0.5,
-        borderColor: 'purple',
-        borderRadius: 8,
-        color: 'black',
-        paddingRight: 30, // to ensure the text is never behind the icon
-        marginBottom: 10,
-    },
-});
-
-export default SearchScreen;
