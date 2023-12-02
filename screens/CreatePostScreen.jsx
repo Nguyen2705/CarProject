@@ -129,7 +129,7 @@ const CreatePostScreen = () => {
       />
 
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => {navigation.navigate('Library')}}>
+        <TouchableOpacity onPress={() => {navigation.navigate('PostLibrary')}}>
           <FontAwesome name="photo" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {navigation.navigate('Camera')}}>
