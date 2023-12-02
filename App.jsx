@@ -11,7 +11,7 @@ import LibraryScreen from './backend/library';
 import PostLibraryScreen from './backend/postLibrary';
 import BottomTabNavigator from './BottomTabNavigator';
 import BioScreen from './screens/BioScreen'; 
-
+import { StatusBar } from 'react-native';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native';
@@ -31,6 +31,9 @@ const Home = () => {
 
 const App = () => {
   return (
+    <>
+      {/* Set the status bar background color */}
+      <StatusBar barStyle="dark-content" backgroundColor="black" />
     <GestureHandlerRootView style={{ flex: 1}}>
       <NavigationContainer>
         <Stack.Navigator>
@@ -47,7 +50,7 @@ const App = () => {
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
-
+    </>
   ); 
 }
 

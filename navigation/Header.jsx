@@ -1,5 +1,5 @@
 import React from 'react'; 
-import { View, Text, Image,StyleSheet, TouchableOpacity, StatusBar} from 'react-native';
+import { View, Text, Image,StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/core'; 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -9,9 +9,6 @@ const Header = () => {
 
     return (
         <>
-        {/* Set the status bar background color */}
-            <StatusBar barStyle="dark-content" backgroundColor="white" />
-
         {/* Header Logo */}
             <View style={styles.headerBackground}> 
                 <TouchableOpacity onPress={() => navigation.navigate('Home')}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, StatusBar, StyleSheet, Text, Image, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, Image, TouchableOpacity, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import axios from 'axios';
 
@@ -125,7 +125,6 @@ const App = () => {
         />
         <Text style={styles.logoText}>CARVO</Text>
       </View>
-      <StatusBar barStyle="light-content" />
       <View style={styles.dropdownContainer}>
         <Dropdown
           style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
