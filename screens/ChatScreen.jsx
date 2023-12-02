@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { auth } from '../firebase'; // Import the 'auth' object from your firebase.js file
-import { GiftedChat, Send } from 'react-native-gifted-chat';
+import { GiftedChat, Send, Bubble } from 'react-native-gifted-chat';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
@@ -79,6 +79,21 @@ const ChatScreen = () => {
               </View>
             </Send>
           )}
+          containerStyle={styles.chatContainer} // Add this line for the overall container
+       
+          renderBubble={props => (
+         <Bubble
+         {...props}
+             wrapperStyle={{
+            right: {
+             backgroundColor: '#0078FF', // Right bubble background color
+          },
+        left: {
+           // Add code to change left bubble background color 
+        },
+      }}
+    />
+  )}
         />
       )}
     </View>
@@ -91,7 +106,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F7F7',
-    paddingBottom: 20,
   },
   header: {
     flexDirection: 'row',
@@ -113,9 +127,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  chatContainer: {
+    backgroundColor: '#FFFFFF', // Background color of the chat box
+    borderTopWidth: 1, // Example border at the top of the chat box
+    borderColor: '#E5E5E5', // Border color
+    paddingBottom: 20,
+  },
   sendButtonContainer: {
-    marginRight: 10,
-    marginBottom: 30,
+    marginRight: 15,
+    marginBottom: 10,
   },
   sendButtonText: {
     top: '80%',
