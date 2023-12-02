@@ -5,7 +5,7 @@ import { auth, firestore, storage } from '../firebase';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { FontAwesome, Feather } from '@expo/vector-icons';
-import ImagePicker from 'react-native-image-crop-picker';
+// import ImagePicker from 'react-native-image-crop-picker';
 
 const CreatePostScreen = () => {
   const [caption, setCaption] = useState('');
@@ -26,36 +26,44 @@ const CreatePostScreen = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleChooseFromLibrary = async () => {
-    try {
-      const image = await ImagePicker.openPicker({
-        width: 300,
-        height: 400,
-        cropping: true,
-      });
+  const handleChooseFromLibrary = () => {
+    const options = {
+      title: 'Select Image',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
   
-      if (image.path) {
-        setImage(image.path);
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        setImage(response.uri);
       }
-    } catch (error) {
-      console.error('Error choosing from library:', error.message);
-    }
+    });
   };
   
-  const handleTakePhoto = async () => {
-    try {
-      const image = await ImagePicker.openCamera({
-        width: 300,
-        height: 400,
-        cropping: true,
-      });
+  const handleTakePhoto = () => {
+    const options = {
+      title: 'Take Photo',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
   
-      if (image.path) {
-        setImage(image.path);
+    ImagePicker.launchCamera(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled camera');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        setImage(response.uri);
       }
-    } catch (error) {
-      console.error('Error taking photo:', error.message);
-    }
+    });
   };
 
   const handlePost = async () => {
@@ -75,6 +83,9 @@ const CreatePostScreen = () => {
       userId: user.uid,
       userName: user.displayName,
       userImage: user.photoURL,
+      numOfComments: 0, 
+      comments: [], 
+      likes: 0, 
     });
 
     console.log('Post created with ID:', postRef.id);
@@ -118,10 +129,10 @@ const CreatePostScreen = () => {
       />
 
       <View style={styles.footer}>
-        <TouchableOpacity onPress={handleChooseFromLibrary}>
+        <TouchableOpacity onPress={() => {navigation.navigate('Library')}}>
           <FontAwesome name="photo" size={24} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleTakePhoto}>
+        <TouchableOpacity onPress={() => {navigation.navigate('Camera')}}>
           <Feather name="camera" size={24} color="black" />
         </TouchableOpacity>
       </View>
