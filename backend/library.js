@@ -112,6 +112,7 @@ export default function LibraryScreen({ navigation }) {
       })
       .then(() => {
         console.log('Image updated successfully');
+        navigation.navigate('Profile');
       })
       .catch((error) => {
         console.error('Error updating image');
