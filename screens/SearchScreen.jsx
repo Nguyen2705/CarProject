@@ -50,15 +50,15 @@ const App = () => {
           'X-RapidAPI-Host': 'car-api2.p.rapidapi.com',
         },
       });
-
-      if (response.data && response.data.collection && Array.isArray(response.data.collection.data)) {
-        // Assuming makes data is nested inside response.data.collection.data
-        setMakesData(response.data.collection.data.map(make => ({ value: make.name, label: make.name })));
+  
+      if (response.data && Array.isArray(response.data.data)) {
+        const makes = response.data.data.map(make => ({ value: make.name, label: make.name }));
+        setMakesData(makes);
       } else {
-        console.error("Makes data is not in the expected format");
+        console.error("Makes data is not in the expected format", response.data);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching makes:", error);
     }
   };
 
@@ -78,16 +78,18 @@ const App = () => {
           'X-RapidAPI-Host': 'car-api2.p.rapidapi.com'
         },
       });
-      if (response.data && Array.isArray(response.data.products)) {
-        // Assuming models data is nested inside response.data.products
-        setModelsData(response.data.products.map(model => ({ value: model, label: model })));
+  
+      if (response.data && response.data.data && Array.isArray(response.data.data)) {
+        const models = response.data.data.map(model => ({ value: model.name, label: model.name }));
+        setModelsData(models);
       } else {
-        console.error("Models data is not in the expected format");
+        console.error("Models data is not in the expected format", response.data);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching models:", error);
     }
   };
+  
 
   const handleModelChange = (item) => {
     setSelectedModel(item.value);
@@ -105,16 +107,18 @@ const App = () => {
           'X-RapidAPI-Host': 'car-api2.p.rapidapi.com'
         },
       });
-      if (response.data && Array.isArray(response.data.products)) {
-        // Assuming trims data is nested inside response.data.products
-        setTrimsData(response.data.products.map(trim => ({ value: trim, label: trim })));
+  
+      if (response.data && response.data.data && Array.isArray(response.data.data)) {
+        const trims = response.data.data.map(trim => ({ value: trim.name, label: trim.name }));
+        setTrimsData(trims);
       } else {
-        console.error("Trims data is not in the expected format");
+        console.error("Trims data is not in the expected format", response.data);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching trims:", error);
     }
   };
+  
 
   return (
     <View style={styles.container}>
