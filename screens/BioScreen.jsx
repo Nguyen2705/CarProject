@@ -80,7 +80,7 @@ const BioScreen = () => {
         },
         goBackButton: {
             position: 'absolute',
-            top: 65,
+            top: Platform.OS == 'ios' ? 65 : 20,
             left: 10,
             zIndex: 2,
         },
@@ -138,27 +138,35 @@ const BioScreen = () => {
                 <Ionicons name="chevron-back-outline" size={30} color="#333363" />
             </TouchableOpacity>
             <Text style={styles.title}>Edit Profile</Text>
+            {/* First Name */}
+            <Text style={styles.label}>First Name:</Text>
             <TextInput
                 style={styles.input}
-                placeholder="First Name"
+                placeholder="Enter your first name"
                 value={firstName}
                 onChangeText={setFirstName}
             />
+            {/* Last Name */}
+            <Text style={styles.label}>Last Name:</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Last Name"
+                placeholder="Enter your last name"
                 value={lastName}
                 onChangeText={setLastName}
             />
+            {/* Username */}
+            <Text style={styles.label}>Username:</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Username"
+                placeholder="Enter your username"
                 value={username}
                 onChangeText={setUsername}
             />
+            {/* Bio */}
+            <Text style={styles.label}>Bio:</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Bio"
+                placeholder="Write a short bio about yourself"
                 value={bio}
                 onChangeText={setBio}
                 multiline
