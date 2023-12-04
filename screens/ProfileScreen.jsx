@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { auth } from '../firebase'; // Import the 'auth' object from your firebase.js file
+import { auth } from '../firebase';
 import CameraAccess from '../backend/camera';
-import {getStorage, ref, getDownloadURL} from "firebase/storage";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import firebase from 'firebase/compat/app';
 import getImageURL from '../backend/fetchImage';
-
-
 
 const ProfileScreen = () => {
     const navigation = useNavigation();
@@ -18,47 +16,50 @@ const ProfileScreen = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [imageURL, setImageURL] = useState(null);
+    const [bio, setBio] = useState('');
+    const [username, setUsername] = useState('');
     const db = firebase.firestore();
     const storage = getStorage();
-    
+
+    const fetchUserData = async (uid) => {
+        const userRef = db.collection('users').doc(uid);
+        try {
+            const doc = await userRef.get();
+            if (doc.exists) {
+                setUsername(doc.data().username);
+                setFirstName(doc.data().firstName);
+                setLastName(doc.data().lastName);
+                setBio(doc.data().bio);
+            }
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-          const unsubscribe = auth.onAuthStateChanged((user) => {
+        const unsubscribe = auth.onAuthStateChanged(user => {
             setCurrentUser(user);
-          });
-    
-          if (currentUser !== null) {
-            const userRef = db.collection('users').doc(currentUser.uid);
-    
-            try {
-              const doc = await userRef.get();
-              if (doc.exists) {
-                setFirstName(doc.get('firstName'));
-                setLastName(doc.get('lastName'));
-              }
-            } catch (error) {
-              console.error('Error fetching user data:', error);
+            if (user) {
+                fetchUserData(user.uid);
+                const storageRef = ref(storage, 'profileImage/' + user.uid);
+                getDownloadURL(storageRef)
+                    .then(url => setImageURL(url))
+                    .catch(error => console.error('Error fetching image URL:', error));
             }
-    
-            const storageRef = ref(storage, 'profileImage/' + currentUser.uid);
-    
-            try {
-              const url = await getDownloadURL(storageRef);
-              setImageURL(url);
-            } catch (error) {
-              console.error('Error fetching image URL:', error);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
+        const unsubscribeFocus = navigation.addListener('focus', () => {
+            if (currentUser) {
+                fetchUserData(currentUser.uid);
             }
-          }
-    
-          return () => unsubscribe();
-        };
-    
-        fetchData();
-      }, [currentUser]);
-    
-    
-    console.log(imageURL);
+        });
+
+        return unsubscribeFocus;
+    }, [currentUser]);
 
     const handleGoBack = () => {
         navigation.goBack();
@@ -68,12 +69,10 @@ const ProfileScreen = () => {
         setModalVisible(!isModalVisible);
     };
 
-    // Menu slide for sign-out button and profile edit
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
 
-    // Handle sign out
     const handleSignOut = () => {
         auth
           .signOut()
@@ -83,43 +82,43 @@ const ProfileScreen = () => {
           .catch((error) => alert(error.message));
     };
 
-    
-
-
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
                     <Ionicons name="chevron-back-outline" size={30} color="#333363" />
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity onPress={toggleMenu}>
                     <Ionicons name='settings-outline' size={26} style={styles.settingsButton} />
                 </TouchableOpacity>
-                
+
                 {menuVisible && (
-                <View style={styles.settingsMenu}>                
-                    <TouchableOpacity onPress={() => navigation.navigate('Bio')}>                  
-                        <Text style={styles.settingsMenuItem}>Edit Profile</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleSignOut}>
-                        <Text style={styles.signOutMenuItem}>Sign Out</Text>
-                    </TouchableOpacity>
-                </View>
+                    <View style={styles.settingsMenu}>
+                        <Text style={styles.settingsMenuItem}>{username}</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('Bio')}>
+                            <Text style={styles.settingsMenuItem}>Edit Profile</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={handleSignOut}>
+                            <Text style={styles.signOutMenuItem}>Sign Out</Text>
+                        </TouchableOpacity>
+                    </View>
                 )}
+
                 {currentUser && (
                     <>
                         <TouchableOpacity onPress={toggleModal}>
-                           <Image
-                              style={styles.avatar}
-                              source={{ uri: imageURL }}
-                           />
+                            <Image
+                                style={styles.avatar}
+                                source={{ uri: imageURL }}
+                            />
                         </TouchableOpacity>
-                        <Text style={styles.name}>{`${firstName} ${lastName}`}</Text>
-                        <Text style={styles.bio}>{currentUser.bio}</Text>
+                        <Text style={styles.name}>{`${firstName}${lastName}`}</Text>
+                        <Text style={styles.bio}>Bio: {bio}</Text>
                     </>
                 )}
             </View>
+
             <View style={styles.stats}>
                 <View style={styles.stat}>
                     <Text style={styles.statNumber}>3</Text>
@@ -134,44 +133,42 @@ const ProfileScreen = () => {
                     <Text style={styles.statTitle}>Following</Text>
                 </View>
             </View>
-            
-            
-            
 
             <View style={styles.photos}>
                 <Image
-                    style={{...styles.photo, width: '32%', height: '70%'}}
+                    style={{ ...styles.photo, width: '32%', height: '70%' }}
                     source={{ uri: 'https://hips.hearstapps.com/hmg-prod/images/07-chiron-dynamic-34-front-web-1499959186.jpg?crop=0.8888888888888888xw:1xh;center,top&resize=2048:*' }}
                 />
                 <Image
-                    style={{...styles.photo, width: '32%', height: '70%'}}
+                    style={{ ...styles.photo, width: '32%', height: '70%' }}
                     source={{ uri: 'https://assets.whichcar.com.au/image/upload/s--Ug5_-ZFW--/ar_2.304921968787515,c_fill,f_auto,q_auto:good/c_scale,w_2048/v1/archive/whichcar/2019/02/14/-1/2019-Mercedes-AMG-G63-performance-review.jpg' }}
                 />
                 <Image
-                    style={{...styles.photo, width: '32%', height: '70%'}}
+                    style={{ ...styles.photo, width: '32%', height: '70%' }}
                     source={{ uri: 'https://www.topgear.com/sites/default/files/2021/09/309038_Honda_Civic_Type_R_Sportline.jpg?w=892&h=502' }}
                 />
             </View>
+
             <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={isModalVisible}
-                  >
-                    <View style={styles.modalContainer}>
-                      <TouchableOpacity style={styles.modalOption} onPress={() => { toggleModal(); navigation.navigate('Library');}}>
+                animationType="fade"
+                transparent={true}
+                visible={isModalVisible}
+            >
+                <View style={styles.modalContainer}>
+                    <TouchableOpacity style={styles.modalOption} onPress={() => { toggleModal(); navigation.navigate('Library'); }}>
                         <Text style={styles.modalOptionText}>Choose From Library</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.modalOption} onPress={() => { toggleModal();  navigation.navigate('Camera'); }}>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.modalOption} onPress={() => { toggleModal(); navigation.navigate('Camera'); }}>
                         <Text style={styles.modalOptionText}>Take Photo</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.modalOption} onPress={toggleModal}>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.modalOption} onPress={toggleModal}>
                         <Text style={styles.modalOptionText}>View Profile Picture</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.modalCloseButton} onPress={toggleModal}>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.modalCloseButton} onPress={toggleModal}>
                         <Text style={styles.modalCloseButtonText}>Close</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </Modal>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
         </View>
     );
 };
