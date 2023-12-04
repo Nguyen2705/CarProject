@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebase';
@@ -83,6 +83,10 @@ const ProfileScreen = () => {
     };
 
     return (
+      <TouchableWithoutFeedback onPress={() => {
+        setModalVisible(false);
+        setMenuVisible(false);
+    }}>
         <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
@@ -113,7 +117,7 @@ const ProfileScreen = () => {
                                 source={{ uri: imageURL }}
                             />
                         </TouchableOpacity>
-                        <Text style={styles.name}>{`${firstName}${lastName}`}</Text>
+                        <Text style={styles.name}>{`${firstName} ${lastName}`}</Text>
                         <Text style={styles.bio}>Bio: {bio}</Text>
                     </>
                 )}
@@ -154,6 +158,7 @@ const ProfileScreen = () => {
                 transparent={true}
                 visible={isModalVisible}
             >
+              <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
                 <View style={styles.modalContainer}>
                     <TouchableOpacity style={styles.modalOption} onPress={() => { toggleModal(); navigation.navigate('Library'); }}>
                         <Text style={styles.modalOptionText}>Choose From Library</Text>
@@ -168,8 +173,10 @@ const ProfileScreen = () => {
                         <Text style={styles.modalCloseButtonText}>Close</Text>
                     </TouchableOpacity>
                 </View>
+                </TouchableWithoutFeedback>
             </Modal>
         </View>
+        </TouchableWithoutFeedback>
     );
 };
 

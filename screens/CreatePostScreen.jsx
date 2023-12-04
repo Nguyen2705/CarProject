@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, Image, TextInput, Button, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, TouchableWithoutFeedback, Keyboard, Alert, TouchableOpacity } from 'react-native';
 import { auth, firestore, storage } from '../firebase';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
@@ -99,6 +99,7 @@ const CreatePostScreen = () => {
   };
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
       <View style={styles.headerBackground}>
         <Text 
@@ -141,6 +142,7 @@ const CreatePostScreen = () => {
           <Text style={styles.postButtonText}>Share</Text>
         </TouchableOpacity>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 
