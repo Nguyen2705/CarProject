@@ -1,81 +1,126 @@
-import React from 'react';
-import { StyleSheet, View, SafeAreaView } from 'react-native';
-import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import React, { useState, useEffect } from 'react';
+import { 
+  StyleSheet, 
+  View, 
+  SafeAreaView, 
+  ScrollView, 
+  RefreshControl } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Post from '../navigation/Post';
 import Header from '../navigation/Header';
-
+import { auth, firestore, storage } from '../firebase';
+import firebase from 'firebase/compat/app';
+import { ref, getDownloadURL } from "firebase/storage";
+import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 
 const HomeScreen = () => {
+  const [posts, setPosts] = useState([]);
+  const [username, setUsername] = useState('');
+  const [imageURL, setImageURL] = useState('');
+  const [caption, setCaption] = useState('');
+  const [comments, setComments] = useState([]);
+  const [likes, setLike] = useState(0);
+  const [timestamp, setTimeStamp] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const db = firebase.firestore();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchUserData = async (uid) => {
+    const userRef = db.collection('users').doc(uid);
+    try {
+      const doc = await userRef.get();
+      if (doc.exists) {
+        setUsername(doc.data().username);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const userRef = doc(firestore, 'users', user.uid);
+        const docSnap = await getDoc(userRef);
+
+        if (docSnap.exists()) {
+          setUsername(docSnap.data().username);
+        } else {
+          // Document does not exist
+          Alert.alert('Error', 'User data not found.');
+        }
+      }
+    };
+
+    loadUserProfile();
+  }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchUserData(currentUser.uid);
+    }
+  }, [currentUser]);
+
+  const fetchImageURL = async (uid) => {
+    const storageRef = ref(storage, `profileImage/${uid}`);
+    const url = await getDownloadURL(storageRef);
+    setImageURL(url);
+  };
+
+  const unsubscribe = auth.onAuthStateChanged((user) => {
+    setCurrentUser(user);
+    if (user) {
+      fetchUserData(user.uid);
+      fetchImageURL(user.uid);
+    }
+  });
+
+  const fetchPostsData = async () => {
+    const postsCollection = collection(db, 'posts');
+    const postsSnapshot = await getDocs(postsCollection);
+    const postsData = postsSnapshot.docs.map((doc) => doc.data());
+    setPosts(postsData);
+  };
+
+  useEffect(() => {
+    fetchPostsData();
+  }, []);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    // Fetch updated data or do any other async operation
+    fetchPostsData()
+      .then(() => setRefreshing(false))
+      .catch(() => setRefreshing(false));
+  };
+
   return (
-    /* Header of HomeScreen */
     <View style={styles.container}>
-      <View style={styles.headerBackground}> 
+      <View style={styles.headerBackground}>
         <Header />
-      </View>  
-      {/* Display all post */}
+      </View>
       <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView style={styles.container}>
-        <ScrollView>
-          {/* Render the test post */}
-          {testPost.map((post, index) => (
-            <Post post={post} key={index} />
-          ))}
-        </ScrollView>
-        {/* <BottomTab icons={bottomTabIcons}/> */}
-      </SafeAreaView>
+        <SafeAreaView style={styles.container}>
+          <ScrollView
+            refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }
+          >
+            {posts && posts.map((post, index) => (
+              <Post post={post} key={index}/>
+            ))}
+          </ScrollView>
+        </SafeAreaView>
       </GestureHandlerRootView>
-    </View> 
+    </View>
   );
 };
-
-// test case for profile
-const User = [
-  {
-    username: 'khoinguyen',
-    image: 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/PostImage%2Fcar.jpg?alt=media&token=7f8ea8e3-453d-4abf-9b29-5c9cf1b2dac9&_gl=1*16iee3m*_ga*OTc2OTg5NDQ4LjE2OTQxMDI5NDg.*_ga_CW55HF8NVT*MTY5ODI5NTQ5MC4yMC4xLjE2OTgyOTU1NjMuNDcuMC4w',
-  }, 
-  {
-    username: 'hungcao', 
-    image: 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/PostImage%2Fcyper_punk.jpg?alt=media&token=5b6b1f18-d20d-4bdf-a9cb-b1f35a75408e&_gl=1*1cnnixz*_ga*OTc2OTg5NDQ4LjE2OTQxMDI5NDg.*_ga_CW55HF8NVT*MTY5ODI5NTQ5MC4yMC4xLjE2OTgyOTU3MDUuNjAuMC4w' }
-];
-
-const testPost = [
-  {
-    username: User[0].username, 
-    imageUrl: 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/PostImage%2Fcar.jpg?alt=media&token=7f8ea8e3-453d-4abf-9b29-5c9cf1b2dac9&_gl=1*16iee3m*_ga*OTc2OTg5NDQ4LjE2OTQxMDI5NDg.*_ga_CW55HF8NVT*MTY5ODI5NTQ5MC4yMC4xLjE2OTgyOTU1NjMuNDcuMC4w', 
-    likes: 12431, 
-    caption: 'Back to HomeTown', 
-    profile_picture: User[0].image, 
-    comments: [
-        {
-            username: 'khoinguyen', 
-            comment: 'Wow', 
-        }, 
-        {
-          username: 'khoinguyen', 
-          comment: 'Wow', 
-        }, 
-        {
-          username: 'khoinguyen', 
-          comment: 'Wow', 
-        }, 
-    ],
-  },
-
-  {
-    username: User[1].username, 
-    imageUrl: 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/PostImage%2Fcyper_punk.jpg?alt=media&token=5b6b1f18-d20d-4bdf-a9cb-b1f35a75408e&_gl=1*1cnnixz*_ga*OTc2OTg5NDQ4LjE2OTQxMDI5NDg.*_ga_CW55HF8NVT*MTY5ODI5NTQ5MC4yMC4xLjE2OTgyOTU3MDUuNjAuMC4w', 
-    likes: 12431, 
-    caption: 'Back to HomeTown', 
-    profile_picture: User[1].image, 
-    comments: [
-        {
-            username: 'khoinguyen', 
-            comment: 'Wow', 
-        }, 
-    ],
-  },
-];
 
 const styles = StyleSheet.create({
   container: {
@@ -84,62 +129,11 @@ const styles = StyleSheet.create({
   },
   headerBackground: {
     backgroundColor: 'white',
-    paddingVertical: 10, 
-    paddingHorizontal: 18, 
-    flexDirection: 'row', 
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  emailText: {
-    fontSize: 16,
-    marginBottom: 20,
-  },
-  newMessageButton: {
-    position: 'absolute',
-    marginTop: 60,
-    marginLeft: 10,
-    padding: 5,
-    borderRadius: 20,
-    alignItems: 'center',
-  },
-  signOutButtonText: {
-    color: '#333363',
-    fontWeight: 'bold',
-    fontSize: 16,
-    alignSelf: 'flex-end',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#E5E5E5',
-    paddingVertical: 10,
-  },
-  footerButton: {
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    flex: 1,
-  },
-  footerButtonText: {
-    color: '#333363',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  newPostButton: {
-    alignItems: 'center',
-    marginTop: -10,
-    bottom: 23,
-  },
 });
-              
+
 export default HomeScreen;

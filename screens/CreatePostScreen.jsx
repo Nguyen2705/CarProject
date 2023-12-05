@@ -1,106 +1,177 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  TextInput,
+  Alert,
+  RefreshControl, 
+  ScrollView
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, Image, TextInput, TouchableWithoutFeedback, Keyboard, Alert, TouchableOpacity } from 'react-native';
 import { auth, firestore, storage } from '../firebase';
+import { ref, getDownloadURL } from "firebase/storage";
+import { doc, getDoc } from 'firebase/firestore';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { FontAwesome, Feather } from '@expo/vector-icons';
-// import ImagePicker from 'react-native-image-crop-picker';
+import * as ImagePicker from 'expo-image-picker';
 
 const CreatePostScreen = () => {
   const [caption, setCaption] = useState('');
-  const [image, setImage] = useState(null);
-  const [user, setUser] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null); // New state for selected image
+  const [username, setUsername] = useState('');
+  const [imageURL, setImageURL] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const navigation = useNavigation();
   const db = firebase.firestore();
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
+  const [refreshing, setRefreshing] = useState(false);
 
-    return () => unsubscribe();
-  }, []);
-
-  const handleChooseFromLibrary = () => {
-    const options = {
-      title: 'Select Image',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-  
-    ImagePicker.showImagePicker(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else {
-        setImage(response.uri);
-      }
-    });
-  };
-  
-  const handleTakePhoto = () => {
-    const options = {
-      title: 'Take Photo',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-  
-    ImagePicker.launchCamera(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled camera');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else {
-        setImage(response.uri);
-      }
-    });
-  };
-
-  const handlePost = async () => {
+  const fetchUserData = async (uid) => {
+    const userRef = db.collection('users').doc(uid);
     try {
-      const currentUser = auth.currentUser;
-
-      if (!currentUser) {
-        throw new Error('User not signed in');
-      }
-
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
-
-    const postRef = await db.collection('posts').add({
-      image: image,
-      caption: caption,
-      timestamp: timestamp,
-      userId: user.uid,
-      userName: user.displayName,
-      userImage: user.photoURL,
-      numOfComments: 0, 
-      comments: [], 
-      likes: 0, 
-    });
-
-    console.log('Post created with ID:', postRef.id);
-
-    setCaption('');
-    Alert.alert('Success', 'Post created successfully!');
+        const doc = await userRef.get();
+        if (doc.exists) {
+            setUsername(doc.data().username);
+        }
     } catch (error) {
-    console.error('Error creating post:', error.message);
-    Alert.alert('Error', 'Failed to create post. Please try again.');
+        console.error('Error fetching user data:', error);
     }
   };
 
+  useEffect(() => {
+    const loadUserProfile = async () => {
+        const user = auth.currentUser;
+        if (user) {
+            const userRef = doc(firestore, 'users', user.uid);
+            const docSnap = await getDoc(userRef);
+
+            if (docSnap.exists()) {
+                setUsername(docSnap.data().username);
+            } else {
+                // Document does not exist
+                Alert.alert('Error', 'User data not found.');
+            }
+        }
+    };
+
+    loadUserProfile();
+  }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+        fetchUserData(currentUser.uid);
+    }
+  }, [currentUser]);
+
+  const fetchImageURL = async (uid) => {
+    const storageRef = ref(storage, `profileImage/${uid}`);
+      const url = await getDownloadURL(storageRef);
+      setImageURL(url);
+  };
+
+  const unsubscribe = auth.onAuthStateChanged((user) => {
+    setCurrentUser(user);
+    if (user) {
+      fetchUserData(user.uid);
+      fetchImageURL(user.uid);
+    }
+  });
+
+  useEffect(() => {
+    if (selectedImage) {
+      console.log('Selected image:', selectedImage);
+    }
+    }, [selectedImage]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchUserData(currentUser.uid);
+
+    await fetchImageURL(currentUser.uid);
+  
+    setRefreshing(false);
+  }, [currentUser]);
+    
+  const handlePost = async () => {
+    if (!currentUser) {
+      console.error('Current user is null.');
+      return;
+    }
+
+    try {
+      console.log('Selected image:', selectedImage);
+  
+      if (!selectedImage) {
+        Alert.alert('Error', 'Please select an image before posting.');
+        return;
+      }
+  
+      const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+  
+      // Generate a unique post ID
+      const postId = `${currentUser.uid}_${Math.random().toString(36).substr(2, 9)}`;
+  
+      const imageRef = storage.ref().child(`posts/${postId}.jpg`);
+  
+      // Upload the image to Firebase Storage
+      const response = await fetch(selectedImage);
+      const blob = await response.blob();
+      await imageRef.put(blob);
+  
+      const postRef = await db.collection('posts').doc(postId).set({
+        uid: currentUser.uid, 
+        username: username, 
+        userImage: imageURL, 
+        postId: postId, 
+        image: await imageRef.getDownloadURL(),
+        caption: caption,
+        timestamp: timestamp,
+        comments: [],
+        likes: 0,
+      });
+  
+      console.log('Post created with ID:', postId);
+  
+      setCaption('');
+      setSelectedImage(null);
+  
+      Alert.alert('Success', 'Post created successfully!');
+    } catch (error) {
+      console.error('Error creating post:', error.message);
+      Alert.alert('Error', 'Failed to create post. Please try again.');
+    }
+  };  
+  
+  const pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [9, 16],
+        quality: 1,
+      });
+  
+      if (!result.canceled) {
+        // Use the assets array instead of uri
+        const selectedAsset = result.assets[0];
+        setSelectedImage(selectedAsset.uri);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <View style={styles.container}>
+    <ScrollView 
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+  }
+    >
       <View style={styles.headerBackground}>
         <Text 
             style={{
@@ -111,16 +182,18 @@ const CreatePostScreen = () => {
         }}>Create Post</Text>
       </View>
 
-      {user && (
-        <View style={styles.header}>
-          {user.photoURL ? (
-            <Image source={{ uri: user.photoURL }} style={styles.profileImage} />
-          ) : (
-            <DefaultProfileImage />
-          )}
-          <Text style={styles.username}>{user.displayName}</Text>
-        </View>
-      )}
+      <View style={styles.header}>
+        {currentUser && (
+          <>
+            <Image 
+              source={{ uri: imageURL || 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/profileImage%2Fdefault.png?alt=media&token=e2443c3b-fc13-4eff-8533-e7c6504dc737'}} 
+              style={styles.profileImage} />
+
+            <Text style={styles.username}> {`${username}`} </Text>
+          </>
+        )}
+      </View>
+
 
       <TextInput
         style={styles.input}
@@ -130,24 +203,31 @@ const CreatePostScreen = () => {
       />
 
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => {navigation.navigate('PostLibrary')}}>
+        <TouchableOpacity onPress={pickImage}>
           <FontAwesome name="photo" size={24} color="black" />
         </TouchableOpacity>
+
         <TouchableOpacity onPress={() => {navigation.navigate('Camera')}}>
           <Feather name="camera" size={24} color="black" />
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.postButton}>
+      {/* <TouchableOpacity style={styles.postButton} onPress={handlePost}>
+        <Text style={styles.postButtonText}>Share</Text>
+      </TouchableOpacity> */}
+
+      {selectedImage && (
+        <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
+      )}
+
+      {selectedImage && (
+        <TouchableOpacity style={styles.postButton} onPress={handlePost}>
           <Text style={styles.postButtonText}>Share</Text>
         </TouchableOpacity>
-    </View>
-    </TouchableWithoutFeedback>
+      )}
+    </ScrollView>
+    // </TouchableWithoutFeedback>
   );
-};
-
-const DefaultProfileImage = () => {
-  return <Image source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/PostImage%2Fcyber_punk.jpg?alt=media&token=5b6b1f18-d20d-4bdf-a9cb-b1f35a75408e' }} style={styles.profileImage} />;
 };
 
 const styles = StyleSheet.create({
@@ -202,6 +282,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   postButton: {
+    top: 20, 
     backgroundColor: '#faca63',
     padding: 10,
     borderRadius: 15,
@@ -210,6 +291,12 @@ const styles = StyleSheet.create({
   postButtonText: {
     color: '#333363',
     fontWeight: 'bold',
+  },
+  selectedImage: {
+    width: '95%',
+    height: '70%',
+    alignSelf: 'center',
+    marginTop: 50,
   },
 });
 

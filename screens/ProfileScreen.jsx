@@ -1,12 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { 
+    View, 
+    Text, 
+    Image, 
+    StyleSheet, 
+    TouchableOpacity, 
+    Modal, 
+    TouchableWithoutFeedback, 
+    RefreshControl,
+    ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebase';
-import CameraAccess from '../backend/camera';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import firebase from 'firebase/compat/app';
-import getImageURL from '../backend/fetchImage';
 
 const ProfileScreen = () => {
     const navigation = useNavigation();
@@ -16,10 +23,16 @@ const ProfileScreen = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [imageURL, setImageURL] = useState(null);
+    const [posts, setPostNum] = useState(0);
+    const [followers, setFollowers] = useState(0);
+    const [following, setFollowing] = useState(0);
     const [bio, setBio] = useState('');
     const [username, setUsername] = useState('');
+
     const db = firebase.firestore();
     const storage = getStorage();
+
+    const [refreshing, setRefreshing] = useState(false);
 
     const fetchUserData = async (uid) => {
         const userRef = db.collection('users').doc(uid);
@@ -30,6 +43,9 @@ const ProfileScreen = () => {
                 setFirstName(doc.data().firstName);
                 setLastName(doc.data().lastName);
                 setBio(doc.data().bio);
+                setPostNum(doc.data().posts); 
+                setFollowers(doc.data().followers); 
+                setFollowing(doc.data().following)
             }
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -44,7 +60,6 @@ const ProfileScreen = () => {
                 const storageRef = ref(storage, 'profileImage/' + user.uid);
                 getDownloadURL(storageRef)
                     .then(url => setImageURL(url))
-                    .catch(error => console.error('Error fetching image URL:', error));
             }
         });
 
@@ -82,12 +97,23 @@ const ProfileScreen = () => {
           .catch((error) => alert(error.message));
     };
 
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await fetchUserData(currentUser.uid);
+      
+        setRefreshing(false);
+    }, [currentUser]);
+
     return (
       <TouchableWithoutFeedback onPress={() => {
         setModalVisible(false);
         setMenuVisible(false);
     }}>
-        <View style={styles.container}>
+        <ScrollView 
+            style={styles.container}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
             <View style={styles.header}>
                 <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
                     <Ionicons name="chevron-back-outline" size={30} color="#333363" />
@@ -114,10 +140,10 @@ const ProfileScreen = () => {
                         <TouchableOpacity onPress={toggleModal}>
                             <Image
                                 style={styles.avatar}
-                                source={{ uri: imageURL }}
+                                source={{ uri: imageURL || 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/profileImage%2Fdefault.png?alt=media&token=e2443c3b-fc13-4eff-8533-e7c6504dc737' }}
                             />
                         </TouchableOpacity>
-                        <Text style={styles.name}>{`${firstName} ${lastName}`}</Text>
+                        <Text style={styles.name}>{`${username}`}</Text>
                         <Text style={styles.bio}>Bio: {bio}</Text>
                     </>
                 )}
@@ -125,15 +151,15 @@ const ProfileScreen = () => {
 
             <View style={styles.stats}>
                 <View style={styles.stat}>
-                    <Text style={styles.statNumber}>3</Text>
+                    <Text style={styles.statNumber}>{`${posts}`}</Text>
                     <Text style={styles.statTitle}>Posts</Text>
                 </View>
                 <View style={styles.stat}>
-                    <Text style={styles.statNumber}>1.5K</Text>
+                    <Text style={styles.statNumber}>{`${followers}`}</Text>
                     <Text style={styles.statTitle}>Followers</Text>
                 </View>
                 <View style={styles.stat}>
-                    <Text style={styles.statNumber}>200</Text>
+                    <Text style={styles.statNumber}>{`${following}`}</Text>
                     <Text style={styles.statTitle}>Following</Text>
                 </View>
             </View>
@@ -175,7 +201,7 @@ const ProfileScreen = () => {
                 </View>
                 </TouchableWithoutFeedback>
             </Modal>
-        </View>
+        </ScrollView>
         </TouchableWithoutFeedback>
     );
 };

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Platform, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as FileSystem from 'expo-file-system';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/storage';
-import { auth } from '../firebase';
+import { auth, firestore, storage } from '../firebase';
+import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 
 export default function LibraryScreen({ navigation }) {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -35,8 +36,6 @@ export default function LibraryScreen({ navigation }) {
     })();
   }, []);
 
-  
-
   const pickImage = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -45,16 +44,18 @@ export default function LibraryScreen({ navigation }) {
         aspect: [9, 16],
         quality: 1,
       });
-
+  
       if (!result.canceled) {
-        setSelectedImage(result.uri);
+        // Use the assets array instead of uri
+        const selectedAsset = result.assets[0];
+        setSelectedImage(selectedAsset.uri);
         setIsEditing(true); // Enable editing mode
       }
     } catch (error) {
       console.log(error);
     }
   };
-
+  
   // Add a function to handle saving the profile picture
   const saveProfilePicture = async () => {
     // Here, you can save the selectedImage as the profile picture
@@ -103,20 +104,18 @@ export default function LibraryScreen({ navigation }) {
       setIsUploading(false);
     };
 
-    const userRef = db.collection('users');
-    userRef
-      .doc(currentUser.uid)
-      .update({
-          image: filename,
-        
-      })
-      .then(() => {
-        console.log('Image updated successfully');
-        navigation.navigate('Profile');
-      })
-      .catch((error) => {
-        console.error('Error updating image');
+    try {
+      const userRef = doc(firestore, 'users', currentUser.uid);
+      await updateDoc(userRef, {
+          profileImage: filename, 
       });
+
+      Alert.alert('Image updated successfully');
+      navigation.goBack();
+  } catch (error) {
+      console.error('Error updating image', error);
+      Alert.alert('Error', 'There was an issue saving your profile.');
+  }
   };
 
   return (

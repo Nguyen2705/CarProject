@@ -7,6 +7,14 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 const Header = () => {
     const navigation = useNavigation(); 
 
+    const handleLogoClick = () => {
+        // Reset the home page by replacing the navigation state
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }], // Replace 'Home' with the actual name of your home screen
+        });
+      };
+
     return (
         <>
         {/* Header Logo */}

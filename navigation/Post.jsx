@@ -3,6 +3,11 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { FontAwesome, MaterialCommunityIcons, AntDesign, Octicons } from '@expo/vector-icons'; 
+import { auth, firestore, storage } from '../firebase';
+import { ref, getDownloadURL } from "firebase/storage";
+import { doc, getDoc } from 'firebase/firestore';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 
 const Post = ({ post }) => {
     const [isTouched, setIsTouched] = useState(true); 
@@ -29,7 +34,7 @@ const Post = ({ post }) => {
                 <Likes post={post} />
                 <Caption post={post} />
                 <CommentSection post={post} />
-                <Comment post= {post} />
+                <Comment comments={post.comments} />
             </View>
         </View>
     ); 
@@ -46,11 +51,23 @@ const PostHeader = ({ post }) => {
             }}
         >
             <View style={{ flexDirection: 'row', alignItems: 'center'}}>
-                <Image source={{ uri: post.profile_picture }} style={styles.icon}/> 
+                <Image source={{ uri: post.userImage }} style={styles.icon}/> 
                 <Text style={{ color: '#333363', marginLeft: 5, fontWeight: '700'}}>
-                    {post.username}
+                    {post.username} 
                 </Text>
             </View>
+
+            {/* <View  style={{ flexDirection: 'row', alignItems: 'center'}}>
+                {currentUser && (
+                <>
+                    <Image 
+                    source={{ uri: imageURL || 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/profileImage%2Fdefault.png?alt=media&token=e2443c3b-fc13-4eff-8533-e7c6504dc737'}} 
+                    style={styles.icon} />
+
+                    <Text style={{ color: '#333363', marginLeft: 5, fontWeight: '700'}}> {`${username}`} </Text>
+                </>
+                )}
+            </View> */}
 
             <Text style={{ color: '#333363', fontWeight: '900' }}>...</Text>
         </View>
@@ -66,14 +83,12 @@ const PostImage = ({ post }) => {
             }}
         >
             <Image 
-                // can be change to get the image from the user when they insert the image in the create post function
-                source={{uri: post.imageUrl}}
+                source={{uri: post.image}}
                 style={{ flex: 1, resizeMode: 'cover' }}
             />
         </View>
     ); 
 };
-
 
 const PostFooter = () => {
     return (
@@ -81,7 +96,7 @@ const PostFooter = () => {
             <View style={styles.leftFooterIconsContainer}>
                 {/* Like Button */}
                 <TouchableOpacity onPress={() => {}}>
-                <FontAwesome name='star-o' size={30} style={styles.iconFooter}/>
+                    <FontAwesome name='star-o' size={30} style={styles.iconFooter}/>
                 </TouchableOpacity>
                 {/* Comment Button  */}
                 <TouchableOpacity onPress={() => {}}>
@@ -89,7 +104,7 @@ const PostFooter = () => {
                 </TouchableOpacity>
                 {/* Send Post */}
                 <TouchableOpacity onPress={() => {}}>
-                <AntDesign name='enter' size={30} style={{width: 30, height: 30, color: '#333363', transform: [{rotateY: '180deg'}]}} />
+                    <AntDesign name='enter' size={30} style={{width: 30, height: 30, color: '#333363', transform: [{rotateY: '180deg'}]}} />
                 </TouchableOpacity>
             </View>
             
@@ -106,7 +121,7 @@ const PostFooter = () => {
 const Likes = ({ post }) => (
     <View style={{ flexDirection: 'row', marginTop: 4 }}>
         <Text style={{ color: 'white', fontWeight: '600'}}>
-            {post.likes.toLocaleString('en')} likes
+            {post.likes} likes
         </Text>
     </View>
 )
@@ -120,36 +135,30 @@ const Caption = ({ post }) => (
     </View>
 )
 
-// post.comments.length = 0 or 1 opr 2
-// 0: false
-// 1: true
-
 const CommentSection = ({ post }) => (
     <View style={{ marginTop: 5 }}>
-        {!!post.comments.length && (
-            <Text style={{ color: 'gray' }}>   
-            {/* 1 comment => render component without 'all' and singular comment
-                2 comments => render component with 'all' and plural comment */}
-                View{post.comments.length > 1 ? ' all' : ''} {post.comments.length}{' '}
-                {post.comments.length > 1 ? 'comments' : 'comment'}
-            </Text>
-        )}
+      {!!post.comments && post.comments.length > 0 && (
+        <Text style={{ color: 'gray' }}>
+          {`View ${post.comments.length} ${post.comments.length > 1 ? 'comments' : 'comment'}`}
+        </Text>
+      )}
     </View>
-)
+);
+  
 
-const Comment = ({ post }) => (
+const Comment = ({ comments }) => (
     <>
-        {post.comments.map((comment, index) => (
-            <View key={index} style={{ flexDirection: 'row', marginTop: 10 }}>
-                <Text style={{ color: '#333363' }}>
-                    <Text style={{ fontWeight: '600' }}>{comment.username}</Text>{' '}
-                    {comment.comment}
-                </Text>
-            </View>
-        ))}
+      {comments && comments.map((comment, index) => (
+        <View key={index} style={{ flexDirection: 'row', marginTop: 10 }}>
+          <Text style={{ color: '#333363' }}>
+            <Text style={{ fontWeight: '600' }}>{comment.username}</Text>{' '}
+            {comment.comment}
+          </Text>
+        </View>
+      ))}
     </>
-)
-
+);
+  
 const styles = StyleSheet.create({
     icon: {
         width: 35, 
@@ -174,4 +183,5 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between', 
     }, 
 })
-export default Post; 
+
+export default Post;
