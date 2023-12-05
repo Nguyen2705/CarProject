@@ -8,7 +8,8 @@ import {
   TextInput,
   Alert,
   RefreshControl, 
-  ScrollView
+  ScrollView,
+  Platform
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { auth, firestore, storage } from '../firebase';
@@ -155,7 +156,7 @@ const CreatePostScreen = () => {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
-        aspect: [9, 16],
+        aspect: [1, 1],
         quality: 1,
       });
   
@@ -253,7 +254,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 20,
+    marginBottom: -20,
   },
   footer: {
     flexDirection: 'row',
@@ -262,7 +263,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   profileImage: {
-    top: 20,
+    top: -20,
     width: 35,
     height: 35,
     borderRadius: 50,
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
     color: '#333363',
     marginLeft: 5,
     fontWeight: '700',
-    top: 30,
+    top: -10,
   },
   input: {
     top: 10,
@@ -286,22 +287,28 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   postButton: {
-    top: 20, 
+    position: 'absolute', // Use absolute positioning
+    bottom: 350, // Distance from the bottom of the screen
+    left: 0, // Align to the left side of the screen
+    right: 0, // Align to the right side of the screen
     backgroundColor: '#faca63',
     padding: 10,
     borderRadius: 15,
     alignItems: 'center',
+    alignSelf: 'center', // Center horizontally
   },
   postButtonText: {
     color: '#333363',
     fontWeight: 'bold',
   },
   selectedImage: {
-    width: '95%',
-    height: '70%',
-    alignSelf: 'center',
-    marginTop: 50,
-  },
+  width: '100%',
+  top: 50,
+  height: undefined, // This will maintain the aspect ratio
+  aspectRatio: 1 / 1, // You can change this based on your needs
+  alignSelf: 'center',
+  resizeMode: 'contain', // Or 'cover', based on how you want the image to fit
+},
 });
 
 export default CreatePostScreen;
