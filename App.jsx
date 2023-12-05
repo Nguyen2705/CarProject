@@ -14,6 +14,7 @@ import CameraScreen from './backend/camera';
 import LibraryScreen from './backend/library';
 import BottomTabNavigator from './BottomTabNavigator';
 import BioScreen from './screens/BioScreen'; 
+import ViewProfileScreen from './screens/ViewProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,7 @@ const App = () => {
             <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
             <Stack.Screen options={{ headerShown: false }} name="Library" component={LibraryScreen} /> 
             <Stack.Screen options={{ headerShown: false }} name="Bio" component={BioScreen} /> 
+            <Stack.Screen options={{ headerShown: false }} name="View" component={ViewProfileScreen} /> 
           </Stack.Navigator>
         </NavigationContainer>
     </GestureHandlerRootView>

@@ -13,7 +13,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { auth, firestore, storage } from '../firebase';
 import { ref, getDownloadURL } from "firebase/storage";
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { FontAwesome, Feather } from '@expo/vector-icons';
@@ -133,7 +133,11 @@ const CreatePostScreen = () => {
         comments: [],
         likes: 0,
       });
-  
+
+       // Update the user's document to increment the post count
+      const userDocRef = doc(firestore, 'users', currentUser.uid);
+      await updateDoc(userDocRef, { posts: firebase.firestore.FieldValue.increment(1) });
+    
       console.log('Post created with ID:', postId);
   
       setCaption('');

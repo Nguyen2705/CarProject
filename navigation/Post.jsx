@@ -1,16 +1,15 @@
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import { View, Text, StyleSheet, Image } from 'react-native'; 
 import { Divider } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { FontAwesome, MaterialCommunityIcons, AntDesign, Octicons } from '@expo/vector-icons'; 
-import { auth, firestore, storage } from '../firebase';
-import { ref, getDownloadURL } from "firebase/storage";
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc, collection } from 'firebase/firestore';
+import { auth, firestore } from '../firebase';
 import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
 
 const Post = ({ post }) => {
     const [isTouched, setIsTouched] = useState(true); 
+
 
     const change = () => {
         setIsTouched(!isTouched); 
@@ -22,7 +21,7 @@ const Post = ({ post }) => {
     
     const changeIcon = (
         <FontAwesome name='star' size={30} style={styles.iconFooter} />
-    ); 
+    );     
 
     return ( 
         <View style={{ marginBottom: 30 }}>
@@ -41,6 +40,103 @@ const Post = ({ post }) => {
 };
 
 const PostHeader = ({ post }) => {
+    // const [username, setUsername] = useState('');
+    // const [currentUser, setCurrentUser] = useState(null);
+    // const [isFollowing, setIsFollowing] = useState(false);
+    // const [posts, setPosts] = useState(null);
+    // const [comments, setComments] = useState([]);
+    // const [likes, setLike] = useState(0);
+    // const [followers, setFollowers] = useState(0);
+    // const [following, setFollowing] = useState(0);
+
+    // const db = firebase.firestore();
+
+    // const fetchUserData = async (uid) => {
+    // const userRef = db.collection('users').doc(uid);
+    // try {
+    //     const doc = await userRef.get();
+    //     if (doc.exists) {
+    //         setUsername(doc.data().username);
+    //         setFollowers(doc.data().followers); 
+    //         setFollowing(doc.data().following); 
+    //         setComments(doc.data().comments)
+    //     }
+    // } catch (error) {
+    //     console.error('Error fetching user data:', error);
+    // }
+    // };
+
+    // useEffect(() => {
+    // const loadUserProfile = async () => {
+    //     const user = auth.currentUser;
+    //     if (user) {
+    //         const userRef = doc(firestore, 'users', user.uid);
+    //         const docSnap = await getDoc(userRef);
+
+    //         if (docSnap.exists()) {
+    //             setUsername(docSnap.data().username);
+    //             setFollowers(docSnap.data().followers); 
+    //             setFollowing(docSnap.data().following); 
+    //             setComments(docSnap.data().comments)
+    //         } else {
+    //             // Document does not exist
+    //             Alert.alert('Error', 'User data not found.');
+    //         }
+    //     }
+    // };
+
+    // loadUserProfile();
+    // }, []);
+    
+    // useEffect(() => {
+    // if (currentUser) {
+    //     fetchUserData(currentUser.uid);
+    // }
+    // }, [currentUser]);
+
+    // const fetchPostsData = async () => {
+    //     const postsCollection = collection(db, 'posts');
+    //     const postsSnapshot = await getDoc(postsCollection);
+    //     const postsData = postsSnapshot.docs.map((doc) => doc.data());
+    //     setPosts(postsData);
+    //   };
+    
+    // useEffect(() => {
+    //     fetchPostsData();
+    // }, []);
+
+    // const handleFollow = async () => {
+    //     try {
+    //       const user = auth.currentUser;
+      
+    //       // Check if the user is logged in
+    //       if (!user) {
+    //         console.error('User is not logged in.');
+    //         return;
+    //       }
+      
+    //       const currentUserDoc = doc(firestore, 'users', user.uid);
+    //       const postAuthorDoc = doc(firestore, 'posts', post.uid);
+      
+    //       // Check if the user is already following
+    //       if (isFollowing) {
+    //         // Unfollow logic - decrement follower count for the current user and following count for the post author
+    //         await updateDoc(currentUserDoc, { followers: followers - 1 });
+    //         await updateDoc(postAuthorDoc, { following: following - 1 });
+    //       } else {
+    //         // Follow logic - increment follower count for the current user and following count for the post author
+    //         await updateDoc(currentUserDoc, { followers: followers + 1 });
+    //         await updateDoc(postAuthorDoc, { following: following + 1 });
+    //       }
+      
+    //       // Toggle the follow status
+    //       setIsFollowing(!isFollowing);
+    //     } catch (error) {
+    //       console.error('Error updating follow status:', error);
+    //     }
+    //   };
+      
+
     return (
         <View 
             style={{
@@ -56,20 +152,12 @@ const PostHeader = ({ post }) => {
                     {post.username} 
                 </Text>
             </View>
-
-            {/* <View  style={{ flexDirection: 'row', alignItems: 'center'}}>
-                {currentUser && (
-                <>
-                    <Image 
-                    source={{ uri: imageURL || 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/profileImage%2Fdefault.png?alt=media&token=e2443c3b-fc13-4eff-8533-e7c6504dc737'}} 
-                    style={styles.icon} />
-
-                    <Text style={{ color: '#333363', marginLeft: 5, fontWeight: '700'}}> {`${username}`} </Text>
-                </>
-                )}
-            </View> */}
-
-            <Text style={{ color: '#333363', fontWeight: '900' }}>...</Text>
+            <TouchableOpacity style={styles.followingButton} onPress={{}}>
+                <Text style={styles.followingButtonText}>
+                    {/* {isFollowing ? 'Unfollow' : 'Follow +'} */}
+                    Follow +
+                </Text>
+            </TouchableOpacity>
         </View>
     ); 
 }; 
@@ -182,6 +270,16 @@ const styles = StyleSheet.create({
         width: '35%', 
         justifyContent: 'space-between', 
     }, 
+    followingButton: {
+        backgroundColor: '#faca63',
+        padding: 10,
+        borderRadius: 15,
+        alignItems: 'center',
+    },
+    followingButtonText: {
+        color: '#333363',
+        fontWeight: 'bold',
+    },
 })
 
 export default Post;

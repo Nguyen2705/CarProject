@@ -8,7 +8,9 @@ import {
     Modal, 
     TouchableWithoutFeedback, 
     RefreshControl,
-    ScrollView } from 'react-native';
+    ScrollView, 
+    FlatList,
+ } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebase';
@@ -23,11 +25,13 @@ const ProfileScreen = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [imageURL, setImageURL] = useState(null);
-    const [posts, setPostNum] = useState(0);
+    const [postsnum, setPostNum] = useState(0);
+    const [postId, setPostID] = useState(null);
     const [followers, setFollowers] = useState(0);
     const [following, setFollowing] = useState(0);
     const [bio, setBio] = useState('');
     const [username, setUsername] = useState('');
+    const [image, setImage] = useState(null);
 
     const db = firebase.firestore();
     const storage = getStorage();
@@ -66,10 +70,24 @@ const ProfileScreen = () => {
         return () => unsubscribe();
     }, []);
 
+    const fetchUserPosts = async (uid) => {
+        const postRef = db.collection('posts').doc(uid);
+        try {
+            const doc = await postRef.get();
+            if (doc.exists) {
+                setImage(doc.data().image); 
+                setPostID(doc.data().postId); 
+            }
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
+
     useEffect(() => {
         const unsubscribeFocus = navigation.addListener('focus', () => {
             if (currentUser) {
                 fetchUserData(currentUser.uid);
+                fetchUserPosts(currentUser.uid); 
             }
         });
 
@@ -109,11 +127,12 @@ const ProfileScreen = () => {
         setModalVisible(false);
         setMenuVisible(false);
     }}>
-        <ScrollView 
+        {/* <ScrollView 
             style={styles.container}
             refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
+        }> */}
+        <View style={styles.container} >
             <View style={styles.header}>
                 <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
                     <Ionicons name="chevron-back-outline" size={30} color="#333363" />
@@ -151,7 +170,7 @@ const ProfileScreen = () => {
 
             <View style={styles.stats}>
                 <View style={styles.stat}>
-                    <Text style={styles.statNumber}>{`${posts}`}</Text>
+                    <Text style={styles.statNumber}>{`${postsnum}`}</Text>
                     <Text style={styles.statTitle}>Posts</Text>
                 </View>
                 <View style={styles.stat}>
@@ -165,17 +184,22 @@ const ProfileScreen = () => {
             </View>
 
             <View style={styles.photos}>
-                <Image
-                    style={{ ...styles.photo, width: '32%', height: '70%' }}
-                    source={{ uri: 'https://hips.hearstapps.com/hmg-prod/images/07-chiron-dynamic-34-front-web-1499959186.jpg?crop=0.8888888888888888xw:1xh;center,top&resize=2048:*' }}
-                />
-                <Image
-                    style={{ ...styles.photo, width: '32%', height: '70%' }}
-                    source={{ uri: 'https://assets.whichcar.com.au/image/upload/s--Ug5_-ZFW--/ar_2.304921968787515,c_fill,f_auto,q_auto:good/c_scale,w_2048/v1/archive/whichcar/2019/02/14/-1/2019-Mercedes-AMG-G63-performance-review.jpg' }}
-                />
-                <Image
-                    style={{ ...styles.photo, width: '32%', height: '70%' }}
-                    source={{ uri: 'https://www.topgear.com/sites/default/files/2021/09/309038_Honda_Civic_Type_R_Sportline.jpg?w=892&h=502' }}
+                <FlatList
+                    data={[{ image, postId }]}
+                    keyExtractor={(item) => item.post}
+                    numColumns={3}
+                    renderItem={({ item }) => (
+                    <TouchableOpacity
+                        onPress={() => {
+                        // Handle tapping on a specific post/image
+                        }}
+                    >
+                        <Image
+                        style={styles.photo}
+                        source={{ uri: image }}
+                        />
+                    </TouchableOpacity>
+                    )}
                 />
             </View>
 
@@ -192,7 +216,7 @@ const ProfileScreen = () => {
                     <TouchableOpacity style={styles.modalOption} onPress={() => { toggleModal(); navigation.navigate('Camera'); }}>
                         <Text style={styles.modalOptionText}>Take Photo</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.modalOption} onPress={toggleModal}>
+                    <TouchableOpacity style={styles.modalOption} onPress={() => {toggleModal(); navigation.navigate('View');}}>
                         <Text style={styles.modalOptionText}>View Profile Picture</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.modalCloseButton} onPress={toggleModal}>
@@ -201,7 +225,8 @@ const ProfileScreen = () => {
                 </View>
                 </TouchableWithoutFeedback>
             </Modal>
-        </ScrollView>
+        {/* </ScrollView> */}
+        </View>
         </TouchableWithoutFeedback>
     );
 };
