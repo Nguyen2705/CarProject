@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { StyleSheet, View, TextInput, Button, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import {Image, StyleSheet, View, TextInput, Button, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 const MapScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [placeDetails, setPlaceDetails] = useState(null);
   const mapViewRef = useRef(null);
 
   const handleSearch = async () => {
@@ -24,8 +26,24 @@ const MapScreen = () => {
     }
   };
 
+  const fetchPlaceDetails = async (placeId) => {
+    try {
+      const detailsApiKey = 'AIzaSyBX-tBieIumRoqv28A4bUhcefwT7-7dv4c'; 
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${detailsApiKey}`
+      );
+      const data = await response.json();
+      if (data.result) {
+        setPlaceDetails(data.result);
+      }
+    } catch (error) {
+      console.error('Error fetching place details:', error);
+    }
+  };
+
   const handleSelectLocation = (location) => {
     setSelectedLocation(location);
+    fetchPlaceDetails(location.place_id);
     setModalVisible(true);
     moveMapToLocation(location);
   };
@@ -100,12 +118,19 @@ const MapScreen = () => {
       </MapView>
 
       <Modal visible={modalVisible} animationType="slide">
-        <View style={styles.modalContainer}>
-          <Text>{selectedLocation?.name}</Text>
-          <Text>{selectedLocation?.formatted_address}</Text>
-          <Button title="Close" onPress={closeModal} />
-        </View>
-      </Modal>
+      <View style={styles.modalContainer}>
+        {/* Display place information */}
+        <Text style={styles.placeName}>{placeDetails?.name}</Text>
+        <Text style={styles.placeAddress}>{placeDetails?.formatted_address}</Text>
+        {placeDetails?.photos && placeDetails.photos.length > 0 && (
+          <Image
+            style={styles.placeImage}
+            source={{ uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${placeDetails.photos[0].photo_reference}&key=YOUR_PLACES_API_KEY` }}
+          />
+        )}
+        <Button title="Close" onPress={closeModal} />
+      </View>
+    </Modal>
     </View>
     </TouchableWithoutFeedback>
   );
@@ -150,6 +175,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  placeName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  placeAddress: {
+    fontSize: 16,
+  },
+  placeImage: {
+    width: '100%',
+    height: 200,
   },
 });
 
