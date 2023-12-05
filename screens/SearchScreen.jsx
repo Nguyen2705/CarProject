@@ -27,7 +27,9 @@ const App = () => {
         },
       });
       if (response.data && Array.isArray(response.data)) {
-        setYearsData(response.data.map(year => ({ value: year, label: year.toString() })));
+        // Filter years from 2015 to 2020 since the free Car API only allows that
+        const filteredYears = response.data.filter(year => year >= 2015 && year <= 2020);
+        setYearsData(filteredYears.map(year => ({ value: year, label: year.toString() })));
       } else {
         console.error('Years data is not in the expected format');
       }
@@ -38,7 +40,12 @@ const App = () => {
 
   const handleYearChange = (item) => {
     setSelectedYear(item.value);
+    setSelectedMake(null); // Clear selected make
+    setSelectedModel(null); // Clear selected model
+    setSelectedTrim(null); // Clear selected trim
     fetchMakes(item.value);
+    setModelsData([]); // Clear models data
+    setTrimsData([]); // Clear trims data
   };
 
   const fetchMakes = async (year) => {
@@ -64,7 +71,10 @@ const App = () => {
 
   const handleMakeChange = (item) => {
     setSelectedMake(item.value);
+    setSelectedModel(null); // Clear selected model
+    setSelectedTrim(null); // Clear selected trim
     fetchModels(selectedYear, item.value);
+    setTrimsData([]); // Clear trims data
   };
 
   const fetchModels = async (year, make) => {
@@ -93,6 +103,7 @@ const App = () => {
 
   const handleModelChange = (item) => {
     setSelectedModel(item.value);
+    setSelectedTrim(null); // Clear selected trim
     fetchTrims(selectedYear, selectedMake, item.value);
   };
 
@@ -109,7 +120,9 @@ const App = () => {
       });
   
       if (response.data && response.data.data && Array.isArray(response.data.data)) {
-        const trims = response.data.data.map(trim => ({ value: trim.name, label: trim.name }));
+        // Use Set to filter out duplicate values
+        const uniqueTrims = [...new Set(response.data.data.map(trim => trim.name))];
+        const trims = uniqueTrims.map(trim => ({ value: trim, label: trim }));
         setTrimsData(trims);
       } else {
         console.error("Trims data is not in the expected format", response.data);
@@ -117,7 +130,7 @@ const App = () => {
     } catch (error) {
       console.error("Error fetching trims:", error);
     }
-  };
+};
   
 
   return (
@@ -195,14 +208,19 @@ const App = () => {
           onChange={(item) => setSelectedTrim(item.value)}
         />
         <TouchableOpacity
-          style={styles.submitButton}
-          onPress={() =>
-            Alert.alert(
-              `You have selected\nYear: ${selectedYear}\nMake: ${selectedMake}\nModel: ${selectedModel}\nTrim: ${selectedTrim}`,
-            )
-          }>
-          <Text style={styles.submitButtonText}>Search</Text>
-        </TouchableOpacity>
+  style={styles.submitButton}
+  onPress={() => {
+    if (selectedYear && selectedMake && selectedModel && selectedTrim) {
+      Alert.alert(
+        `You have selected\nYear: ${selectedYear}\nMake: ${selectedMake}\nModel: ${selectedModel}\nTrim: ${selectedTrim}`,
+      );
+    } else {
+      Alert.alert('Please select values for all options.');
+    }
+  }}
+>
+  <Text style={styles.submitButtonText}>Search</Text>
+</TouchableOpacity>
       </View>
     </View>
   );

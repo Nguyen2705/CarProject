@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { StyleSheet, View, TextInput, Button, Modal, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TextInput, Button, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 const MapScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,6 +50,7 @@ const MapScreen = () => {
   };
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
       <View style={styles.searchContainer}>
         <TextInput
@@ -106,6 +107,7 @@ const MapScreen = () => {
         </View>
       </Modal>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 

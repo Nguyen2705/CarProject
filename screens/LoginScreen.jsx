@@ -9,6 +9,8 @@ import {
   View,
   Image,
   Platform,
+  TouchableWithoutFeedback, 
+  Keyboard
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../firebase';
@@ -48,6 +50,7 @@ const LoginScreen = () => {
   };
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <KeyboardAvoidingView style={styles.container} behavior={KeyboardAvoidingBehavior} enabled={Platform.OS === 'ios'}>
       
       <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
@@ -94,6 +97,7 @@ const LoginScreen = () => {
         <Text style={styles.signUpButtonText}>Sign Up with Email</Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 

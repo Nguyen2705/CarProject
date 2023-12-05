@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, Image, TextInput, TouchableWithoutFeedback, Keyboard, Alert, TouchableOpacity } from 'react-native';
 import { auth, firestore, storage } from '../firebase';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
@@ -127,7 +128,7 @@ const CreatePostScreen = () => {
   };
   
   return (
-    <ScrollView  style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.headerBackground}>
         <Text 
             style={{
@@ -182,6 +183,7 @@ const CreatePostScreen = () => {
         </TouchableOpacity>
       )}
     </ScrollView>
+    </TouchableWithoutFeedback>
   );
 };
 
