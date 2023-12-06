@@ -33,10 +33,6 @@ const SignUpScreen = () => {
   }, []);
 
   const generateRandomUsername = () => {
-    // Implement your logic to generate a random username
-    // This could involve combining some fixed text with a random string
-    // For example, 'user' + Math.random().toString(36).substring(2, 8)
-    // Make sure to check if the generated username is unique in your database
     return `user${Math.random().toString(36).substring(2, 8)}`;
   };
 
