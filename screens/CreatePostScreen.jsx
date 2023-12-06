@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: -20,
+    marginBottom: Platform.OS == 'ios' ? 0 : -20,
   },
   footer: {
     flexDirection: 'row',
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   profileImage: {
-    top: -20,
+    top: Platform.OS == 'ios' ? 0 :-20,
     width: 35,
     height: 35,
     borderRadius: 50,
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     color: '#333363',
     marginLeft: 5,
     fontWeight: '700',
-    top: -10,
+    top: Platform.OS == 'ios' ? 10 : -10,
   },
   input: {
     top: 10,
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   },
   postButton: {
     position: 'absolute', // Use absolute positioning
-    bottom: 350, // Distance from the bottom of the screen
+    bottom: Platform.OS == 'ios' ? 370 : 350, // Distance from the bottom of the screen
     left: 0, // Align to the left side of the screen
     right: 0, // Align to the right side of the screen
     backgroundColor: '#faca63',
