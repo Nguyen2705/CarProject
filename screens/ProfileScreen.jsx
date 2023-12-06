@@ -47,7 +47,13 @@ const ProfileScreen = () => {
                 setFirstName(doc.data().firstName);
                 setLastName(doc.data().lastName);
                 setBio(doc.data().bio);
-                setPostNum(doc.data().posts); 
+                // Check if the posts field exists and is not null
+                const postsCount = doc.data().posts;
+                if (postsCount !== null && postsCount !== undefined) {
+                setPostNum(postsCount); 
+                } else {
+                setPostNum(0); // Set to 0 if no posts field or if it's null
+            }
                 setFollowers(doc.data().followers); 
                 setFollowing(doc.data().following)
             }
