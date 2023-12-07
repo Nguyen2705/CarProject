@@ -1,20 +1,10 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState } from 'react'; 
 import { View, Text, StyleSheet, Image } from 'react-native'; 
 import { Divider } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { FontAwesome, MaterialCommunityIcons, AntDesign, Octicons } from '@expo/vector-icons'; 
-import { doc, updateDoc, getDoc, collection } from 'firebase/firestore';
-import { auth, firestore } from '../firebase';
-import firebase from 'firebase/compat/app';
 
 const Post = ({ post }) => {
-    const [isTouched, setIsTouched] = useState(true); 
-
-
-    const change = () => {
-        setIsTouched(!isTouched); 
-    };
-    
     const defaultIcon = (
         <FontAwesome name='star-o' size={30} style={styles.iconFooter} />
     ); 
@@ -40,124 +30,41 @@ const Post = ({ post }) => {
 };
 
 const PostHeader = ({ post }) => {
-    // const [username, setUsername] = useState('');
-    // const [currentUser, setCurrentUser] = useState(null);
-    // const [isFollowing, setIsFollowing] = useState(false);
-    // const [posts, setPosts] = useState(null);
-    // const [comments, setComments] = useState([]);
-    // const [likes, setLike] = useState(0);
-    // const [followers, setFollowers] = useState(0);
-    // const [following, setFollowing] = useState(0);
+    const [isFollowing, setIsFollowing] = useState(false);
 
-    // const db = firebase.firestore();
+    const onFollowPress = () => {
+        handleFollowing(post.uid, isFollowing);
+        setIsFollowing(!isFollowing);
+    };
 
-    // const fetchUserData = async (uid) => {
-    // const userRef = db.collection('users').doc(uid);
-    // try {
-    //     const doc = await userRef.get();
-    //     if (doc.exists) {
-    //         setUsername(doc.data().username);
-    //         setFollowers(doc.data().followers); 
-    //         setFollowing(doc.data().following); 
-    //         setComments(doc.data().comments)
-    //     }
-    // } catch (error) {
-    //     console.error('Error fetching user data:', error);
-    // }
-    // };
-
-    // useEffect(() => {
-    // const loadUserProfile = async () => {
-    //     const user = auth.currentUser;
-    //     if (user) {
-    //         const userRef = doc(firestore, 'users', user.uid);
-    //         const docSnap = await getDoc(userRef);
-
-    //         if (docSnap.exists()) {
-    //             setUsername(docSnap.data().username);
-    //             setFollowers(docSnap.data().followers); 
-    //             setFollowing(docSnap.data().following); 
-    //             setComments(docSnap.data().comments)
-    //         } else {
-    //             // Document does not exist
-    //             Alert.alert('Error', 'User data not found.');
-    //         }
-    //     }
-    // };
-
-    // loadUserProfile();
-    // }, []);
-    
-    // useEffect(() => {
-    // if (currentUser) {
-    //     fetchUserData(currentUser.uid);
-    // }
-    // }, [currentUser]);
-
-    // const fetchPostsData = async () => {
-    //     const postsCollection = collection(db, 'posts');
-    //     const postsSnapshot = await getDoc(postsCollection);
-    //     const postsData = postsSnapshot.docs.map((doc) => doc.data());
-    //     setPosts(postsData);
-    //   };
-    
-    // useEffect(() => {
-    //     fetchPostsData();
-    // }, []);
-
-    // const handleFollow = async () => {
-    //     try {
-    //       const user = auth.currentUser;
+    const timestamp = new Date(post.timestamp.seconds * 1000);
       
-    //       // Check if the user is logged in
-    //       if (!user) {
-    //         console.error('User is not logged in.');
-    //         return;
-    //       }
-      
-    //       const currentUserDoc = doc(firestore, 'users', user.uid);
-    //       const postAuthorDoc = doc(firestore, 'posts', post.uid);
-      
-    //       // Check if the user is already following
-    //       if (isFollowing) {
-    //         // Unfollow logic - decrement follower count for the current user and following count for the post author
-    //         await updateDoc(currentUserDoc, { followers: followers - 1 });
-    //         await updateDoc(postAuthorDoc, { following: following - 1 });
-    //       } else {
-    //         // Follow logic - increment follower count for the current user and following count for the post author
-    //         await updateDoc(currentUserDoc, { followers: followers + 1 });
-    //         await updateDoc(postAuthorDoc, { following: following + 1 });
-    //       }
-      
-    //       // Toggle the follow status
-    //       setIsFollowing(!isFollowing);
-    //     } catch (error) {
-    //       console.error('Error updating follow status:', error);
-    //     }
-    //   };
-      
-
     return (
-        <View 
-            style={{
-                flexDirection: 'row', 
-                justifyContent: 'space-between',
-                margin: 5, 
-                alignItems: 'center', 
-            }}
-        >
-            <View style={{ flexDirection: 'row', alignItems: 'center'}}>
-                <Image source={{ uri: post.userImage }} style={styles.icon}/> 
-                <Text style={{ color: '#333363', marginLeft: 5, fontWeight: '700'}}>
-                    {post.username} 
+        <View  style={{ flexDirection: 'row' }}>
+            <Image source={{ uri: post.userImage }} style={styles.icon} />
+            
+            <View style={{ flexDirection: 'column', justifyContent: 'space-between', marginLeft: 10, marginTop: Platform.OS == 'ios' ? 10 : -40 }}>
+                <Text style={{ color: '#333363', fontWeight: '700'}}>
+                    {post.username}
+                </Text>
+                <Text style={{ color: '#333363', fontSize: 10, flexDirection: 'column'}}>
+                    {timestamp.toLocaleString()} 
                 </Text>
             </View>
-            <TouchableOpacity style={styles.followingButton} onPress={{}}>
-                <Text style={styles.followingButtonText}>
-                    {/* {isFollowing ? 'Unfollow' : 'Follow +'} */}
-                    Follow +
-                </Text>
-            </TouchableOpacity>
+
+            <View style={{ 
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginLeft: 145,
+                marginTop: Platform.OS == 'ios' ? 10 : -40, 
+                }}
+            >
+                <TouchableOpacity style={styles.followingButton} onPress={() => onFollowPress(post.uid, isFollowing)}>
+                    <Text style={styles.followingButtonText}>
+                        {isFollowing ? 'Unfollow' : 'Follow +'}
+                    </Text>
+                </TouchableOpacity>
+            </View>
         </View>
     ); 
 }; 
@@ -255,6 +162,7 @@ const styles = StyleSheet.create({
         marginLeft: 6, 
         borderWidth: 1.6, 
         borderColor: '#ff8501', 
+        marginTop: Platform.OS == 'ios' ? 10 : -40, 
     }, 
     iconStyle: {
         width: 40, 
