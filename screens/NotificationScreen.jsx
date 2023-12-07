@@ -57,14 +57,30 @@ const NotificationScreen = () => {
     }
   };
 
+  const getTimeDifference = (timestamp) => {
+    const now = new Date().getTime();
+    const timeDiff = now - timestamp;
+  
+    const minutes = Math.floor(timeDiff / 60000);
+    const hours = Math.floor(timeDiff / 3600000);
+    const days = Math.floor(timeDiff / (3600000 * 24));
+  
+    if (minutes < 60) {
+      return `${minutes}m`;
+    } else if (hours < 24) {
+      return `${hours}h`;
+    } else {
+      return `${days}d`;
+    }
+  };
+
   // Replace this with your actual notifications data
   const notifications = [
-    { id: '1', action: 'Liked your Post', timestamp: new Date().getTime() },
+    { id: 'SKKxZC7KSNPvhf2UGzU9TY22p912', action: 'Liked your Post', timestamp: new Date().getTime() - (60 * 1000)},
     { id: '2', action: 'Started following you', timestamp: new Date().getTime() - (2 * 24 * 60 * 60 * 1000) }, 
     { id: '3', action: 'Shared your Post', timestamp: new Date().getTime() - (8 * 24 * 60 * 60 * 1000) }, 
     { id: '4', action: 'Liked your Post', timestamp: new Date().getTime() - (14 * 24 * 60 * 60 * 1000) },
     { id: '5', action: 'Started Following you', timestamp: new Date().getTime() - (21 * 24 * 60 * 60 * 1000) },
-    // ... more notifications
   ];
 
   // Categorize notifications by time
@@ -97,10 +113,10 @@ const NotificationScreen = () => {
   // Function to render each notification item
   const renderNotificationItem = ({ item }) => (
     <View style={styles.notificationItem}>
-      <Image source={{ uri: imageURL || 'default_avatar_url' }} style={styles.avatar} />
+      <Image source={{ uri: imageURL || 'https://firebasestorage.googleapis.com/v0/b/car-project-b12f9.appspot.com/o/profileImage%2Fdefault.png?alt=media&token=e2443c3b-fc13-4eff-8533-e7c6504dc737' }} style={styles.avatar} />
       <View style={styles.textContainer}>
         <Text style={styles.userName}>{username}</Text>
-        <Text style={styles.actionText}>{item.action}</Text>
+        <Text style={styles.actionText}>{item.action} · {getTimeDifference(item.timestamp)}</Text>
       </View>
     </View>
   );

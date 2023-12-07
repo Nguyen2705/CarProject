@@ -1,56 +1,17 @@
 import React, { useState, useRef } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import {Image, StyleSheet, View, TextInput, Button, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, View, Modal, Text, Button, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 const MapScreen = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [placeDetails, setPlaceDetails] = useState(null);
   const mapViewRef = useRef(null);
-
-  const handleSearch = async () => {
-    try {
-      // Your API key here
-      const apiKey = 'AIzaSyBX-tBieIumRoqv28A4bUhcefwT7-7dv4c';
-      const encodedQuery = encodeURIComponent(searchQuery);
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodedQuery}&key=${apiKey}`
-      );
-      const data = await response.json();
-      setSearchResults(data.results);
-    } catch (error) {
-      console.error('Error fetching search results:', error);
-    }
-  };
-
-  const fetchPlaceDetails = async (placeId) => {
-    try {
-      const detailsApiKey = 'AIzaSyBX-tBieIumRoqv28A4bUhcefwT7-7dv4c'; 
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${detailsApiKey}`
-      );
-      const data = await response.json();
-      if (data.result) {
-        setPlaceDetails(data.result);
-      }
-    } catch (error) {
-      console.error('Error fetching place details:', error);
-    }
-  };
-
-  const handleSelectLocation = (location) => {
-    setSelectedLocation(location);
-    fetchPlaceDetails(location.place_id);
-    setModalVisible(true);
-    moveMapToLocation(location);
-  };
+  const autocompleteRef = useRef(null);  // Ref for GooglePlacesAutocomplete
 
   const moveMapToLocation = (location) => {
     if (mapViewRef.current) {
-      const { lat, lng } = location.geometry.location;
+      const { lat, lng } = location;
       const region = {
         latitude: lat,
         longitude: lng,
@@ -67,71 +28,71 @@ const MapScreen = () => {
     setModalVisible(false);
   };
 
+  const resetSelection = () => {
+    setSelectedLocation(null);
+    setModalVisible(false);
+    if (autocompleteRef.current) {
+      autocompleteRef.current.setAddressText(''); // Clear the text input
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Search for a place"
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)}
-        />
-        <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-          <Text style={styles.searchButtonText}>Search</Text>
-        </TouchableOpacity>
-      </View>
-
-      <MapView
-        ref={mapViewRef}
-        style={styles.map}
-        initialRegion={{
-          latitude: 32.705002,
-          longitude: -97.122780,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      >
-        {selectedLocation && (
-          <Marker
-            coordinate={{
-              latitude: selectedLocation.geometry.location.lat,
-              longitude: selectedLocation.geometry.location.lng,
+      <View style={styles.container}>
+        <View style={styles.searchContainer}>
+          <GooglePlacesAutocomplete
+            ref={autocompleteRef}  // Attach the ref here
+            placeholder="Search for a place"
+            onPress={(data, details = null) => {
+              setSelectedLocation({
+                name: details.name,
+                geometry: { location: { lat: details.geometry.location.lat, lng: details.geometry.location.lng } },
+                formatted_address: details.formatted_address,
+              });
+              moveMapToLocation(details.geometry.location);
+              setModalVisible(true);
             }}
-            title={selectedLocation.name}
-            description={selectedLocation.formatted_address}
-          />
-        )}
-
-        {searchResults.map((result) => (
-          <Marker
-            key={result.place_id}
-            coordinate={{
-              latitude: result.geometry.location.lat,
-              longitude: result.geometry.location.lng,
+            query={{
+              key: 'AIzaSyBX-tBieIumRoqv28A4bUhcefwT7-7dv4c', // Replace with your Google API Key
+              language: 'en',
             }}
-            title={result.name}
-            description={result.formatted_address}
-            onPress={() => handleSelectLocation(result)}
+            fetchDetails={true}
+            styles={{
+              textInput: styles.input,
+            }}  
           />
-        ))}
-      </MapView>
+        </View>
 
-      <Modal visible={modalVisible} animationType="slide">
-      <View style={styles.modalContainer}>
-        {/* Display place information */}
-        <Text style={styles.placeName}>{placeDetails?.name}</Text>
-        <Text style={styles.placeAddress}>{placeDetails?.formatted_address}</Text>
-        {placeDetails?.photos && placeDetails.photos.length > 0 && (
-          <Image
-            style={styles.placeImage}
-            source={{ uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${placeDetails.photos[0].photo_reference}&key=YOUR_PLACES_API_KEY` }}
-          />
-        )}
-        <Button title="Close" onPress={closeModal} />
+        <MapView
+          ref={mapViewRef}
+          style={styles.map}
+          initialRegion={{
+            latitude: 32.705002,
+            longitude: -97.122780,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        >
+          {selectedLocation && (
+            <Marker
+              coordinate={{
+                latitude: selectedLocation.geometry.location.lat,
+                longitude: selectedLocation.geometry.location.lng,
+              }}
+              title={selectedLocation.name}
+              description={selectedLocation.formatted_address}
+            />
+          )}
+        </MapView>
+
+        <Modal visible={modalVisible} animationType="slide" >
+          <View style={styles.modalContainer}>
+            <Text style={styles.placeName}>{selectedLocation?.name}</Text>
+            <Text style={styles.placeAddress}>{selectedLocation?.formatted_address}</Text>
+            <Button title="Close" onPress={closeModal} />
+          </View>
+        </Modal>
       </View>
-    </Modal>
-    </View>
     </TouchableWithoutFeedback>
   );
 };
@@ -145,31 +106,18 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: 'row',
-    paddingHorizontal: Platform.OS === 'ios' ? 25 : 20,
-    paddingVertical: Platform.OS === 'ios' ? 40 : 10,
-    top: Platform.OS === 'ios' ? 0 : 0,
+    paddingHorizontal: 15,
+    paddingVertical: Platform.OS === 'ios' ? 35 : 6,
     backgroundColor: 'white',
-    
+    alignItems: 'center',
   },
   input: {
     flex: 1,
-    marginRight: 10,
-    top: Platform.OS === 'ios' ? 25 : 0,
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 10,
-  },
-  searchButton: {
-    backgroundColor: '#faca63',
-    borderRadius: 15,
-    padding: 10,
-    top: Platform.OS === 'ios' ? 25 : 0,
-  },
-  searchButtonText: {
-    color: '#333363',
-    fontWeight: 'bold',
-    fontSize: 16,
+    top: 17,
   },
   modalContainer: {
     flex: 1,
@@ -183,9 +131,14 @@ const styles = StyleSheet.create({
   placeAddress: {
     fontSize: 16,
   },
-  placeImage: {
-    width: '100%',
-    height: 200,
+  cancelButton: {
+    backgroundColor: '#faca63',
+    borderRadius: 15,
+    padding: 10,
+    left: 3,  
+  },
+  cancelButtonText: {
+    color: '#333363',
   },
 });
 
