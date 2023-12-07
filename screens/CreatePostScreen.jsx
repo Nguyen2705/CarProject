@@ -181,7 +181,7 @@ const CreatePostScreen = () => {
         <Text 
             style={{
                 top: Platform.OS == 'ios' ? 20 : 5,
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: 'bold',
                 color: '#333363', // Header text color
         }}>Create Post</Text>
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     bottom: Platform.OS == 'ios' ? 5 : 30,
-    paddingVertical: Platform.OS == 'ios' ? 40 : 20,
+    paddingVertical: Platform.OS == 'ios' ? 35 : 20,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
     justifyContent: 'center',

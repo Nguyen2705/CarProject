@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, SectionList } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, Image, SectionList, Platform, RefreshControl } from 'react-native';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import firebase from 'firebase/compat/app';
 import { auth } from '../firebase';
@@ -8,9 +8,9 @@ const NotificationScreen = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [imageURL, setImageURL] = useState('');
   const [username, setUsername] = useState('');
-
   const db = firebase.firestore();
   const storage = getStorage();
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
@@ -19,9 +19,21 @@ const NotificationScreen = () => {
         fetchUserData(user.uid);
       }
     });
-
     return () => unsubscribe();
   }, []);
+
+  const onRefresh = useCallback(async () => {
+    if (currentUser) {
+      setRefreshing(true);
+      try {
+        await fetchUserData(currentUser.uid);
+        await fetchImageURL(currentUser.uid);
+      } catch (error) {
+        console.error('Error on refreshing:', error);
+      }
+      setRefreshing(false);
+    }
+  }, [currentUser]);
 
   const fetchUserData = async (uid) => {
     const userRef = db.collection('users').doc(uid);
@@ -29,14 +41,19 @@ const NotificationScreen = () => {
       const doc = await userRef.get();
       if (doc.exists) {
         setUsername(doc.data().username);
-        const storageRef = ref(storage, 'profileImage/' + uid);
-        getDownloadURL(storageRef)
-          .then(url => {
-            setImageURL(url);
-          });
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
+    }
+  };
+
+  const fetchImageURL = async (uid) => {
+    try {
+      const storageRef = ref(storage, `profileImage/${uid}`);
+      const url = await getDownloadURL(storageRef);
+      setImageURL(url);
+    } catch (error) {
+      console.error('Error fetching image URL:', error);
     }
   };
 
@@ -95,11 +112,26 @@ const NotificationScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.headerBackground}>
+        <Text 
+          style={{
+            top: Platform.OS == 'ios' ? 27.5 : 5,
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: '#333363', // Header text color
+          }}
+        >
+          Notifications
+        </Text>
+      </View>
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.id}
         renderItem={renderNotificationItem}
         renderSectionHeader={renderSectionHeader}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </View>
   );
@@ -116,7 +148,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
     alignItems: 'center',
-    top: Platform.OS == 'ios' ? 80 : 10,
   },
   avatar: {
     width: 50,
@@ -139,7 +170,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: '#f7f7f7',
     padding: 10,
-    top: Platform.OS == 'ios' ? 80 : 10,
+  },
+  headerBackground: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    bottom: Platform.OS == 'ios' ? 5 : 10,
+    paddingVertical: Platform.OS == 'ios' ? 40 : 10,
+    
+    justifyContent: 'center',
+    backgroundColor: 'white', // Header background color
   },
 });
 
