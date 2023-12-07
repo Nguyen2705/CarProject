@@ -191,6 +191,7 @@ const PostHeader = ({ post }) => {
           console.error('Error unfollowing user:', error);
         }
         setIsFollowing(false);
+
       };
       
 
