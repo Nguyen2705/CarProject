@@ -108,37 +108,37 @@ const HomeScreen = () => {
       .catch(() => setRefreshing(false));
   };
 
-  const handleFollowing = async (targetUserId, isFollowing) => {
-    const currentUserRef = doc(db, 'users', currentUser.uid);
-    const targetUserRef = doc(db, 'users', targetUserId);
+  // const handleFollowing = async (targetUserId, isFollowing) => {
+  //   const currentUserRef = doc(db, 'users', currentUser.uid);
+  //   const targetUserRef = doc(db, 'users', targetUserId);
 
-    try {
-        if (isFollowing) {
-        // Unfollow logic
-        await updateDoc(currentUserRef, {
-            followingList: arrayRemove(targetUserId),
-            following: firebase.firestore.FieldValue.decrement(1),
-        });
-        await updateDoc(targetUserRef, {
-            followersList: arrayRemove(currentUser.uid),
-            followers: firebase.firestore.FieldValue.decrement(1),
-        });
-        } else {
-        // Follow logic
-        await updateDoc(currentUserRef, {
-            followingList: arrayUnion(targetUserId),
-            following: firebase.firestore.FieldValue.increment(1),
-        });
-        await updateDoc(targetUserRef, {
-            followersList: arrayUnion(currentUser.uid),
-            followers: firebase.firestore.FieldValue.increment(1) 
-        });
-        }
-        console.log(`User ${currentUser.uid} is ${isFollowing ? 'unfollowing' : 'following'} user ${targetUserId}`);
-    } catch (error) {
-        console.error('Error updating follow status:', error);
-    }
-  }
+  //   try {
+  //       if (isFollowing) {
+  //       // Unfollow logic
+  //       await updateDoc(currentUserRef, {
+  //           followingList: arrayRemove(targetUserId),
+  //           following: firebase.firestore.FieldValue.decrement(1),
+  //       });
+  //       await updateDoc(targetUserRef, {
+  //           followersList: arrayRemove(currentUser.uid),
+  //           followers: firebase.firestore.FieldValue.decrement(1),
+  //       });
+  //       } else {
+  //       // Follow logic
+  //       await updateDoc(currentUserRef, {
+  //           followingList: arrayUnion(targetUserId),
+  //           following: firebase.firestore.FieldValue.increment(1),
+  //       });
+  //       await updateDoc(targetUserRef, {
+  //           followersList: arrayUnion(currentUser.uid),
+  //           followers: firebase.firestore.FieldValue.increment(1) 
+  //       });
+  //       }
+  //       console.log(`User ${currentUser.uid} is ${isFollowing ? 'unfollowing' : 'following'} user ${targetUserId}`);
+  //   } catch (error) {
+  //       console.error('Error updating follow status:', error);
+  //   }
+  // }
 
   return (
     <View style={styles.container}>
@@ -156,7 +156,8 @@ const HomeScreen = () => {
               }
           >
             {posts && posts.map((post, index) => (
-              <Post post={post} key={index} handleFollowing={() => handleFollowing(post.uid, followingList.includes(post.uid))} />
+              <Post post={post} key={index}  />
+              // handleFollowing={() => handleFollowing(post.uid, followingList.includes(post.uid))}
             ))}
           </ScrollView>
         </SafeAreaView>
