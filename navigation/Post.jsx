@@ -206,9 +206,14 @@ const PostHeader = ({ post }) => {
         >
             <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                 <Image source={{ uri: post.userImage }} style={styles.icon}/> 
-                <Text style={{ color: '#333363', marginLeft: 5, fontWeight: '700'}}>
-                    {post.username} 
-                </Text>
+                <View style={{}}> 
+                    <Text style={{ color: '#333363', marginLeft: 5, fontWeight: '700'}}>
+                        {post.username} 
+                    </Text>
+                    <Text style={{ color: '#333363', marginLeft: 5, fontWeight: '700'}}>
+                        {post.timestamp} 
+                    </Text>
+                </View>
             </View>
             {isFollowing ? (
                 <TouchableOpacity style={styles.followingButton} onPress={() => onUnfollow()}>

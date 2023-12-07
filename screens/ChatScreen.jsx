@@ -11,6 +11,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  con
   const db = firebase.firestore();
   const navigation = useNavigation();
 
