@@ -184,10 +184,11 @@ const styles = StyleSheet.create({
     right: 0, // Adjust this value as needed
   },
   saveButton: {
+    position: 'absolute',
     padding: 10,
     borderRadius: 5,
     position: 'absolute',
-    top: 65, // Adjust this value as needed to position the button
+    top: 12, // Adjust this value as needed to position the button
     right: 10, // Adjust this value as needed to position the button
   },
   saveButtonText: {
