@@ -181,11 +181,11 @@ const ProfileScreen = () => {
                 </View>
                 <View style={styles.stat}>
                     <Text style={styles.statNumber}>{`${followers}`}</Text>
-                    <Text style={styles.statTitle}>Followers</Text>
+                    <Text style={styles.statTitle}>Following</Text>
                 </View>
                 <View style={styles.stat}>
                     <Text style={styles.statNumber}>{`${following}`}</Text>
-                    <Text style={styles.statTitle}>Following</Text>
+                    <Text style={styles.statTitle}>Followers</Text>
                 </View>
             </View>
 

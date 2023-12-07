@@ -42,7 +42,6 @@ const Post = ({ post }) => {
 const PostHeader = ({ post }) => {
     // const [username, setUsername] = useState('');
     const [currentUser, setCurrentUser] = useState(null);
-    const [postUser, setPostUser] = useState(null);
     const [isFollowing, setIsFollowing] = useState(false);
     // const [posts, setPosts] = useState(null);
     // const [comments, setComments] = useState([]);
@@ -62,90 +61,6 @@ const PostHeader = ({ post }) => {
         return () => unsubscribe();
     }, []);
 
-    // const fetchUserData = async (uid) => {
-    // const userRef = db.collection('users').doc(uid);
-    // try {
-    //     const doc = await userRef.get();
-    //     if (doc.exists) {
-    //         setUsername(doc.data().username);
-    //         setFollowers(doc.data().followers); 
-    //         setFollowing(doc.data().following); 
-    //         setComments(doc.data().comments)
-    //     }
-    // } catch (error) {
-    //     console.error('Error fetching user data:', error);
-    // }
-    // };
-
-    // useEffect(() => {
-    // const loadUserProfile = async () => {
-    //     const user = auth.currentUser;
-    //     if (user) {
-    //         const userRef = doc(firestore, 'users', user.uid);
-    //         const docSnap = await getDoc(userRef);
-
-    //         if (docSnap.exists()) {
-    //             setUsername(docSnap.data().username);
-    //             setFollowers(docSnap.data().followers); 
-    //             setFollowing(docSnap.data().following); 
-    //             setComments(docSnap.data().comments)
-    //         } else {
-    //             // Document does not exist
-    //             Alert.alert('Error', 'User data not found.');
-    //         }
-    //     }
-    // };
-
-    // loadUserProfile();
-    // }, []);
-    
-    // useEffect(() => {
-    // if (currentUser) {
-    //     fetchUserData(currentUser.uid);
-    // }
-    // }, [currentUser]);
-
-    // const fetchPostsData = async () => {
-    //     const postsCollection = collection(db, 'posts');
-    //     const postsSnapshot = await getDoc(postsCollection);
-    //     const postsData = postsSnapshot.docs.map((doc) => doc.data());
-    //     setPosts(postsData);
-    //   };
-    
-    // useEffect(() => {
-    //     fetchPostsData();
-    // }, []);
-
-    // const handleFollow = async () => {
-    //     try {
-    //       const user = auth.currentUser;
-      
-    //       // Check if the user is logged in
-    //       if (!user) {
-    //         console.error('User is not logged in.');
-    //         return;
-    //       }
-      
-    //       const currentUserDoc = doc(firestore, 'users', user.uid);
-    //       const postAuthorDoc = doc(firestore, 'posts', post.uid);
-      
-    //       // Check if the user is already following
-    //       if (isFollowing) {
-    //         // Unfollow logic - decrement follower count for the current user and following count for the post author
-    //         await updateDoc(currentUserDoc, { followers: followers - 1 });
-    //         await updateDoc(postAuthorDoc, { following: following - 1 });
-    //       } else {
-    //         // Follow logic - increment follower count for the current user and following count for the post author
-    //         await updateDoc(currentUserDoc, { followers: followers + 1 });
-    //         await updateDoc(postAuthorDoc, { following: following + 1 });
-    //       }
-      
-    //       // Toggle the follow status
-    //       setIsFollowing(!isFollowing);
-    //     } catch (error) {
-    //       console.error('Error updating follow status:', error);
-    //     }
-    //   };
     const onFollow = async () => {
         try {
           const userDoc = await db.collection("users").doc(postRef).get();
@@ -156,15 +71,15 @@ const PostHeader = ({ post }) => {
       
             // Check if the user is already in the followersList
             if (!currentFollowersList.includes(currentUser.uid)) {
-              // Add the current user to the followersList
-              await db.collection("users")
-                .doc(postRef)
-                .update({
-                    followersList: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
-                    following: firebase.firestore.FieldValue.increment(1)
-                });
-      
-              console.log('Successfully followed user!');
+                const updatedFollowersList = [...currentFollowersList, currentUser.uid];
+                await db.collection("users")
+                    .doc(postRef)
+                    .update({
+                        followersList: updatedFollowersList,
+                        followers: firebase.firestore.FieldValue.increment(1)
+                    });
+        
+                console.log('Successfully followed user!');
             } else {
               console.log('User is already in the followersList.');
             }
@@ -174,21 +89,66 @@ const PostHeader = ({ post }) => {
         } catch (error) {
           console.error('Error following user:', error);
         }
+
+        try {
+            const userDoc = await db.collection("users").doc(currentUser.uid).get();
+        
+            if (userDoc.exists) {
+            const currentFollowingList = userDoc.data().followingList || [];
+            const postUser = userDoc.data().uid;
+
+                if (!currentFollowingList.includes(postUser)) {
+                    const updatedFollowingList = [...currentFollowingList, currentUser.uid];
+                
+                    
+                    await db.collection("users")
+                    .doc(currentUser.uid)
+                    .update({
+                        followingList: updatedFollowingList,
+                        following: firebase.firestore.FieldValue.increment(1)
+                });
+        
+                };
+            }
+        
+        } catch (error) {
+            console.error('Error following user:', error);
+        }
         setIsFollowing(true);
       };
-      const onUnfollow = async () => {
+      
+      
+    const onUnfollow = async () => {
         try {
           // Remove the current user from the followersList
           await db.collection("users")
             .doc(postRef)
             .update({
               followersList: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
-              following: firebase.firestore.FieldValue.increment(-1)
+              followers: firebase.firestore.FieldValue.increment(-1)
             });
       
           console.log('Successfully unfollowed user!');
         } catch (error) {
           console.error('Error unfollowing user:', error);
+        }
+
+        try {
+            // Remove the current user from the followersList
+            const userDoc = await db.collection("users").doc(currentUser.uid).get();
+
+            const postUser = userDoc.data().uid;
+
+            await db.collection("users")
+            .doc(currentUser.uid)
+            .update({
+                followingList: firebase.firestore.FieldValue.arrayRemove(postUser),
+                following: firebase.firestore.FieldValue.increment(-1)
+            });
+        
+            console.log('Successfully unfollowed user!');
+        } catch (error) {
+            console.error('Error unfollowing user:', error);
         }
         setIsFollowing(false);
 
