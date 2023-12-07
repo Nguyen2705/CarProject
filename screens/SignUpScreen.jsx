@@ -57,6 +57,8 @@ const SignUpScreen = () => {
         followers: 0, 
         following: 0, 
         posts: 0, 
+        followersList: [],
+        followingList: [], 
       };
 
       await firestore.collection('users').doc(authUser.user.uid).set(user);

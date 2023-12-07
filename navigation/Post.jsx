@@ -153,22 +153,28 @@ const PostHeader = ({ post }) => {
         setIsFollowing(false);
 
       };
-      
+    
+      const timestampFormat = post.timestamp.toDate().toLocaleString(); 
 
     return (
         <View 
             style={{
                 flexDirection: 'row', 
                 justifyContent: 'space-between',
-                margin: 5, 
+                marginTop: 10,
                 alignItems: 'center', 
             }}
         >
             <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                 <Image source={{ uri: post.userImage }} style={styles.icon}/> 
-                <Text style={{ color: '#333363', marginLeft: 5, fontWeight: '700'}}>
-                    {post.username} 
-                </Text>
+                <View style={{}}> 
+                    <Text style={{ color: '#333363', marginLeft: 5, fontWeight: '700'}}>
+                        {post.username} 
+                    </Text>
+                    <Text style={{ color: '#333363', marginLeft: 5, fontSize: 12}}>
+                        {timestampFormat} 
+                    </Text>
+                </View>
             </View>
             {isFollowing ? (
                 <TouchableOpacity style={styles.followingButton} onPress={() => onUnfollow()}>

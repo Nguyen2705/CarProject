@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -11,7 +11,7 @@ import Header from '../navigation/Header';
 import { auth, firestore, storage } from '../firebase';
 import firebase from 'firebase/compat/app';
 import { ref, getDownloadURL } from "firebase/storage";
-import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, orderBy} from 'firebase/firestore';
 
 const HomeScreen = () => {
   const [posts, setPosts] = useState([]);
@@ -21,6 +21,10 @@ const HomeScreen = () => {
   const [comments, setComments] = useState([]);
   const [likes, setLike] = useState(0);
   const [timestamp, setTimeStamp] = useState('');
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(0);
+  const [followersList, setFollowersList] = useState([]);
+  const [followingList, setFollowingList] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
   const db = firebase.firestore();
@@ -33,6 +37,11 @@ const HomeScreen = () => {
       const doc = await userRef.get();
       if (doc.exists) {
         setUsername(doc.data().username);
+        setFollowers(doc.data().followers); 
+        setFollowing(doc.data().following); 
+        setComments(doc.data().comments)
+        setFollowersList(doc.data().followersList); 
+        setFollowingList(doc.data().followingList); 
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -80,22 +89,26 @@ const HomeScreen = () => {
 
   const fetchPostsData = async () => {
     const postsCollection = collection(db, 'posts');
-    const postsSnapshot = await getDocs(postsCollection);
-    const postsData = postsSnapshot.docs.map((doc) => doc.data());
+    const postsSnapshot = await getDocs(query(postsCollection, orderBy('timestamp', 'desc')));
+    const postsData = postsSnapshot.docs
+      .map((doc) => doc.data());
     setPosts(postsData);
-  };
+  };  
 
   useEffect(() => {
     fetchPostsData();
   }, []);
-
-  const onRefresh = () => {
+  
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    // Fetch updated data or do any other async operation
-    fetchPostsData()
-      .then(() => setRefreshing(false))
-      .catch(() => setRefreshing(false));
-  };
+    await fetchUserData(currentUser.uid);
+
+    await fetchImageURL(currentUser.uid);
+
+    await fetchPostsData(); 
+  
+    setRefreshing(false);
+  }, [currentUser]);
 
   return (
     <View style={styles.container}>
@@ -113,7 +126,7 @@ const HomeScreen = () => {
               }
           >
             {posts && posts.map((post, index) => (
-              <Post post={post} key={index}/>
+              <Post post={post} key={index}  />
             ))}
           </ScrollView>
         </SafeAreaView>
