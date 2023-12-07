@@ -191,7 +191,6 @@ const PostHeader = ({ post }) => {
           console.error('Error unfollowing user:', error);
         }
         setIsFollowing(false);
-
       };
       
 
@@ -200,7 +199,7 @@ const PostHeader = ({ post }) => {
             style={{
                 flexDirection: 'row', 
                 justifyContent: 'space-between',
-                margin: 5, 
+                marginTop: 10,
                 alignItems: 'center', 
             }}
         >
