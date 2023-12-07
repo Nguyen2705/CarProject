@@ -41,15 +41,26 @@ const Post = ({ post }) => {
 
 const PostHeader = ({ post }) => {
     // const [username, setUsername] = useState('');
-    // const [currentUser, setCurrentUser] = useState(null);
-    // const [isFollowing, setIsFollowing] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [postUser, setPostUser] = useState(null);
+    const [isFollowing, setIsFollowing] = useState(false);
     // const [posts, setPosts] = useState(null);
     // const [comments, setComments] = useState([]);
     // const [likes, setLike] = useState(0);
     // const [followers, setFollowers] = useState(0);
     // const [following, setFollowing] = useState(0);
 
-    // const db = firebase.firestore();
+    const db = firebase.firestore();
+
+    const postRef = post.uid;
+    //console.log(postRef);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            setCurrentUser(user);
+        });
+        return () => unsubscribe();
+    }, []);
 
     // const fetchUserData = async (uid) => {
     // const userRef = db.collection('users').doc(uid);
@@ -135,6 +146,53 @@ const PostHeader = ({ post }) => {
     //       console.error('Error updating follow status:', error);
     //     }
     //   };
+    const onFollow = async () => {
+        try {
+          const userDoc = await db.collection("users").doc(postRef).get();
+      
+          if (userDoc.exists) {
+            // Get the current followersList array
+            const currentFollowersList = userDoc.data().followersList || [];
+      
+            // Check if the user is already in the followersList
+            if (!currentFollowersList.includes(currentUser.uid)) {
+              // Add the current user to the followersList
+              await db.collection("users")
+                .doc(postRef)
+                .update({
+                    followersList: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
+                    following: firebase.firestore.FieldValue.increment(1)
+                });
+      
+              console.log('Successfully followed user!');
+            } else {
+              console.log('User is already in the followersList.');
+            }
+          } else {
+            console.log('User document does not exist.');
+          }
+        } catch (error) {
+          console.error('Error following user:', error);
+        }
+        setIsFollowing(true);
+      };
+      const onUnfollow = async () => {
+        try {
+          // Remove the current user from the followersList
+          await db.collection("users")
+            .doc(postRef)
+            .update({
+              followersList: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
+              following: firebase.firestore.FieldValue.increment(-1)
+            });
+      
+          console.log('Successfully unfollowed user!');
+        } catch (error) {
+          console.error('Error unfollowing user:', error);
+        }
+        setIsFollowing(false);
+
+      };
       
 
     return (
@@ -152,12 +210,20 @@ const PostHeader = ({ post }) => {
                     {post.username} 
                 </Text>
             </View>
-            <TouchableOpacity style={styles.followingButton} onPress={{}}>
-                <Text style={styles.followingButtonText}>
-                    {/* {isFollowing ? 'Unfollow' : 'Follow +'} */}
-                    Follow +
-                </Text>
-            </TouchableOpacity>
+            {isFollowing ? (
+                <TouchableOpacity style={styles.followingButton} onPress={() => onUnfollow()}>
+                    <Text style={styles.followingButtonText}>
+                        Following
+                    </Text>
+                </TouchableOpacity>
+            ) : (
+                <TouchableOpacity style={styles.followingButton} onPress={() => onFollow()}>
+                    <Text style={styles.followingButtonText}>
+                        Follow
+                    </Text>
+                </TouchableOpacity>
+            )}
+            
         </View>
     ); 
 }; 
