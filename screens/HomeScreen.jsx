@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -11,7 +11,7 @@ import Header from '../navigation/Header';
 import { auth, firestore, storage } from '../firebase';
 import firebase from 'firebase/compat/app';
 import { ref, getDownloadURL } from "firebase/storage";
-import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, orderBy} from 'firebase/firestore';
 
 const HomeScreen = () => {
   const [posts, setPosts] = useState([]);
@@ -89,56 +89,26 @@ const HomeScreen = () => {
 
   const fetchPostsData = async () => {
     const postsCollection = collection(db, 'posts');
-    const postsSnapshot = await getDocs(postsCollection);
+    const postsSnapshot = await getDocs(query(postsCollection, orderBy('timestamp', 'desc')));
     const postsData = postsSnapshot.docs
-      .map((doc) => doc.data())
-      .sort((a, b) => b.timestamp.seconds - a.timestamp.seconds); // Sort by timestamp in descending order
+      .map((doc) => doc.data());
     setPosts(postsData);
-  };
+  };  
 
   useEffect(() => {
     fetchPostsData();
   }, []);
-
-  const onRefresh = () => {
+  
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    // Fetch updated data or do any other async operation
-    fetchPostsData()
-      .then(() => setRefreshing(false))
-      .catch(() => setRefreshing(false));
-  };
+    await fetchUserData(currentUser.uid);
 
-  // const handleFollowing = async (targetUserId, isFollowing) => {
-  //   const currentUserRef = doc(db, 'users', currentUser.uid);
-  //   const targetUserRef = doc(db, 'users', targetUserId);
+    await fetchImageURL(currentUser.uid);
 
-  //   try {
-  //       if (isFollowing) {
-  //       // Unfollow logic
-  //       await updateDoc(currentUserRef, {
-  //           followingList: arrayRemove(targetUserId),
-  //           following: firebase.firestore.FieldValue.decrement(1),
-  //       });
-  //       await updateDoc(targetUserRef, {
-  //           followersList: arrayRemove(currentUser.uid),
-  //           followers: firebase.firestore.FieldValue.decrement(1),
-  //       });
-  //       } else {
-  //       // Follow logic
-  //       await updateDoc(currentUserRef, {
-  //           followingList: arrayUnion(targetUserId),
-  //           following: firebase.firestore.FieldValue.increment(1),
-  //       });
-  //       await updateDoc(targetUserRef, {
-  //           followersList: arrayUnion(currentUser.uid),
-  //           followers: firebase.firestore.FieldValue.increment(1) 
-  //       });
-  //       }
-  //       console.log(`User ${currentUser.uid} is ${isFollowing ? 'unfollowing' : 'following'} user ${targetUserId}`);
-  //   } catch (error) {
-  //       console.error('Error updating follow status:', error);
-  //   }
-  // }
+    await fetchPostsData(); 
+  
+    setRefreshing(false);
+  }, [currentUser]);
 
   return (
     <View style={styles.container}>
@@ -157,7 +127,6 @@ const HomeScreen = () => {
           >
             {posts && posts.map((post, index) => (
               <Post post={post} key={index}  />
-              // handleFollowing={() => handleFollowing(post.uid, followingList.includes(post.uid))}
             ))}
           </ScrollView>
         </SafeAreaView>

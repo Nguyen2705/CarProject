@@ -153,7 +153,8 @@ const PostHeader = ({ post }) => {
         setIsFollowing(false);
 
       };
-      
+    
+      const timestampFormat = post.timestamp.toDate().toLocaleString(); 
 
     return (
         <View 
@@ -170,8 +171,8 @@ const PostHeader = ({ post }) => {
                     <Text style={{ color: '#333363', marginLeft: 5, fontWeight: '700'}}>
                         {post.username} 
                     </Text>
-                    <Text style={{ color: '#333363', marginLeft: 5, fontWeight: '700'}}>
-                        {post.timestamp} 
+                    <Text style={{ color: '#333363', marginLeft: 5, fontSize: 12}}>
+                        {timestampFormat} 
                     </Text>
                 </View>
             </View>
