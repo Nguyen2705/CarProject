@@ -132,11 +132,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF', // Background color of the chat box
     borderTopWidth: 1, // Example border at the top of the chat box
     borderColor: '#E5E5E5', // Border color
-    paddingBottom: 20,
+    paddingBottom: 5,
   },
   sendButtonContainer: {
     marginRight: 15,
-    marginBottom: 10,
+    marginBottom: Platform.OS == 'ios' ? 24.5 : 23,
   },
   sendButtonText: {
     top: '80%',
