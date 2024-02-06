@@ -4,7 +4,7 @@
 ## About the application
 CARVO is a social media platform where users can share their feedback and thoughts about specific automobiles they have used. Our application provides a space for everyone to connect with their passion for the automotive world.
 
-Our platform offers a unique space where users can not only share their automotive adventures but also dive deep into the world of cars, motorcycles, trucks, and every mode of transportation in between.
+Our platform offers a unique space where users can not only share their automotive adventures but also dive deep into the world of cars, motorcycles, trucks, and help users discover the best nearby dealerships, making the car selection process more accessible and reliable.
 
 ## Technology
 This project uses:
@@ -15,9 +15,8 @@ This project uses:
 - Firebase
 - Expo
 - JavaScript
-- Tailwind CSS
-- Python
-- MySQL
+- Express.js
+  
 
 ## Running the project
 
